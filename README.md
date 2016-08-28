@@ -1,0 +1,1 @@
+This package is the software side of an educational platform to teach non-verbal children to read music.

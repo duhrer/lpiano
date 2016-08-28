@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <title>Vexflow Test Page</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- Our test component -->
+        <script src="./js/vexflow.demo.js"></script>
+    </head>
+    <html>
+        <p>This is a demonstration of fluid.lpiano.vexflow, a <a href="http://docs.fluidproject.org/infusion">Fluid component</a> wrapper for <a href="https://github.com/0xfe/vexflow/vexflow-demo.html">VexFlow</a>.</p>
+
+        <hr/>
+
+        <div class="vexflow-container"></div>
+
+        <script>
+            var vexflowComponent = fluid.tests.lpiano.vexflow.demo();
+        </script>
+    </html>
+</html>

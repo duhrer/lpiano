@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <title>Vexflow Test Page</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- The base grade for demo components -->
+        <script src="./js/vexflow.demo.js"></script>
+
+        <!-- Our test component -->
+        <script src="./js/vexflow-annotation-demos.js"></script>
+    </head>
+    <html>
+        <h1>VexFlow Annotation Demos</h1>
+
+
+        <h2>Fonts</h2>
+
+        <h3>Font Size</h3>
+        <div class="vexflow-annotation-fontsize-container"></div>
+
+        <h3>Font Family</h3>
+        <div class="vexflow-annotation-fontfamily-container"></div>
+
+        <h2>Justification</h2>
+
+        <h3>Horizontal</h3>
+        <div class="vexflow-annotation-justify-container"></div>
+
+        <h3>Vertical</h3>
+        <div class="vexflow-annotation-verticaljustify-container"></div>
+
+        <script>
+            fluid.tests.lpiano.vexflow.annotation.fontSize();
+            fluid.tests.lpiano.vexflow.annotation.fontFamily();
+
+            fluid.tests.lpiano.vexflow.annotation.justify();
+            fluid.tests.lpiano.vexflow.annotation.verticalJustify();
+        </script>
+    </html>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "lpiano",
+  "version": "1.0.0",
+  "description": "The Learning Piano, A tool to help kids learn to plan piano.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node tests/all-tests.js"
+  },
+  "author": "Tony Atkins <tony@raisingthefloor.org>",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "flocking": "0.1.6",
+    "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
+    "vexflow": "1.2.77"
+  }
+}
