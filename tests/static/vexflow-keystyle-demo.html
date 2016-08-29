@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Vexflow Key Style Test Page</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- The base grade for demo components -->
+        <script src="./js/vexflow.demo.js"></script>
+
+        <!-- Our test component -->
+        <script src="js/vexflow-keystyle-demos.js"></script>
+    </head>
+    <html>
+        <h1>VexFlow Key Style Demos</h1>
+
+
+        <h2>Single Keys</h2>
+
+        <div class="vexflow-keystyle-key-container"></div>
+
+        <h2>Entire Notes</h2>
+
+        <div class="vexflow-keystyle-note-container"></div>
+
+        <h2>Overriding Note Settings Per Key</h2>
+
+        <div class="vexflow-keystyle-keyoverride-container"></div>
+
+
+        <script>
+            fluid.tests.lpiano.vexflow.keystyle.key();
+            fluid.tests.lpiano.vexflow.keystyle.note();
+            fluid.tests.lpiano.vexflow.keystyle.keyOverride();
+        </script>
+    </html>
+</html>

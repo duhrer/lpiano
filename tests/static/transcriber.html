@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MIDI Note Recorder</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDebugging.js"></script>
+        <script src="../../node_modules/infusion/src/framework/enhancement/js/ContextAwareness.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- Flocking dependencies -->
+        <script src="../../node_modules/flocking/dist/flocking-all.js"></script>
+        <script src="../../node_modules/flocking/src/ui/selectbox/js/selectbox.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
+
+        <script src="../../src/js/vexflow.js"></script>
+        <script src="../../src/js/transforms.js"></script>
+        <script src="../../src/js/noteMidiInput.js"></script>
+        <script src="../../src/js/transcriber.js"></script>
+    </head>
+
+    <body>
+        <div class="transcriber-container">
+            <h1>Note Transcriber Demo</h1>
+            <p class="instructions">This demo transcribes notes and displays them using VexFlow.</p>
+
+            <div class="vexflow-container"></div>
+
+            <p>Note:</p>
+
+            <ol>
+                <li>All notes are treated as quarter notes regardless of length.</li>
+                <li>Pauses between notes are not recorded.</li>
+                <li>Half notes are only represented as sharps.</li>
+                <li>Keys hit within 25 ms of each other are displayed as a chord.</li>
+                <li>Only the last 8 keys/chords are displayed.</li>
+            </ol>
+        </div>
+
+        <script>
+            var transcriber = fluid.lpiano.transcriber(".transcriber-container");
+        </script>
+    </body>
+</html>

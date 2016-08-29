@@ -18,12 +18,12 @@
     var VF = Vex.Flow;
     fluid.registerNamespace("fluid.lpiano.vexflow");
 
-    fluid.lpiano.vexflow.renderStave = function (that, staveDef){
+    fluid.lpiano.vexflow.renderStave = function (that, staveDef) {
         var context = that.renderer.getContext();
         var stave = fluid.lpiano.vexflow.buildStave(that, staveDef);
 
         var notes = [];
-        
+
         fluid.each(staveDef.notes, function (noteDef) {
             var note = fluid.lpiano.vexflow.buildNote(that, noteDef);
             notes.push(note);
@@ -35,7 +35,7 @@
         Vex.Flow.Formatter.FormatAndDraw(context, stave, notes);
         beams.forEach(function(b) {b.setContext(context).draw()});
     };
-    
+
     fluid.lpiano.vexflow.buildStave = function (that, staveDef) {
         // Create a stave of width 400 at position 10, 40 on the canvas.
         var stave = new VF.Stave(staveDef.xPos, staveDef.yPos, staveDef.width);
@@ -97,7 +97,7 @@
         // Apply top-level functions to all keys
         fluid.each(that.options.noteFunctionMapping, function (fnName, propKey) {
             if (noteDef[propKey]) {
-                for (var a = 0; a < noteDef.keys.length; a++) {
+                for (var index = 0; index < noteDef.keys.length; index++) {
                     var fnArgs = [index].concat(fluid.makeArray(noteDef[propKey]));
                     note[fnName].apply(note, fnArgs);
                 }
@@ -148,17 +148,22 @@
 
         return note;
     };
-    
+
     fluid.lpiano.vexflow.render = function (that) {
         var targetElement = document.querySelector(that.options.selector);
+        targetElement.innerHTML = "";
 
         that.renderer = new VF.Renderer(targetElement, that.options.rendererOptions.backend);
-        that.renderer.resize(that.options.rendererOptions.width, that.options.rendererOptions.height);
+        that.resize(that.options.rendererOptions.width, that.options.rendererOptions.height);
 
 
         fluid.each(fluid.makeArray(that.options.staves), function (staveDef){
             fluid.lpiano.vexflow.renderStave(that, staveDef);
         });
+    };
+
+    fluid.lpiano.vexflow.resize = function (that, width, height) {
+        that.renderer.resize(width, height);
     };
 
     fluid.defaults("fluid.lpiano.vexflow", {
@@ -190,18 +195,17 @@
             justification: "setJustification", // A value in `Annotation.Justify`.
             verticalJustification: "setVerticalJustification" // A value in `Annotation.VerticalJustify`.
         },
-        staves: {},
+        staves: [],
         invokers: {
             render: {
                 funcName: "fluid.lpiano.vexflow.render",
                 args:     ["{that}"]
+            },
+            resize: {
+                funcName: "fluid.lpiano.vexflow.resize",
+                args:     ["{that}", "{arguments}.0", "{arguments}.1"]
             }
         }
     })
 
 })();
-
-
-// TODO:  Add tests and support for "short" notation
-
-// TODO:  Add tests and support for single, double, triple dots.

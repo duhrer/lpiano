@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Vexflow Stave Test Page</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- The base grade for demo components -->
+        <script src="./js/vexflow.demo.js"></script>
+
+        <!-- Our test component -->
+        <script src="js/vexflow-stave-demos.js"></script>
+    </head>
+    <html>
+        <h1>VexFlow Stave Demos</h1>
+
+
+        <h2>Multiple Staves</h2>
+
+        <div class="vexflow-stave-multi-container"></div>
+
+
+        <script>
+            fluid.tests.lpiano.vexflow.stave.multi();
+        </script>
+    </html>
+</html>

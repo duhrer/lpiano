@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MIDI Note Recorder</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDebugging.js"></script>
+        <script src="../../node_modules/infusion/src/framework/enhancement/js/ContextAwareness.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- Flocking dependencies -->
+        <script src="../../node_modules/flocking/dist/flocking-all.js"></script>
+        <script src="../../node_modules/flocking/src/ui/selectbox/js/selectbox.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
+
+        <script src="../../src/js/noteMidiInput.js"></script>
+    </head>
+
+    <body>
+        <div class="midi-note-recorder-container">
+            <h1>MIDI Note Recorder Demo</h1>
+            <p class="instructions">This demo records all notes played using the selected MIDI input.</p>
+
+            // TODO:  Add an onscreen keyboard that functions if MIDI is not available and an icon to indicate if MIDI is available.
+        </div>
+
+        <script>
+            var noteMidiInput = fluid.lpiano.noteMidiInput(".midi-note-recorder-container");
+        </script>
+    </body>
+</html>
