@@ -32,19 +32,17 @@
         <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
 
         <script src="../../src/js/synth.js"></script>
-        <script src="../../src/js/noteMidiInput.js"></script>
+        <script src="../../src/js/oxygen8.js"></script>
     </head>
 
     <body>
-        <div class="midi-note-recorder-container">
-            <h1>MIDI Note Recorder Demo</h1>
-            <p class="instructions">This demo records all notes played using the selected MIDI input.</p>
-
-            // TODO:  Add an onscreen keyboard that functions if MIDI is not available and an icon to indicate if MIDI is available.
+        <div class="oxygen8-container">
+            <h1>Oxygen8 Demo</h1>
+            <p class="instructions">A synth with controls configured to match an M-Audio Oxygen8.</p>
         </div>
 
         <script>
-            var noteMidiInput = fluid.lpiano.noteMidiInput(".midi-note-recorder-container");
+            var noteMidiInput = fluid.lpiano.oxygen8(".oxygen8-container");
         </script>
     </body>
 </html>
