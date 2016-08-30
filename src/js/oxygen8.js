@@ -1,13 +1,6 @@
 /*
 
-    Listens for MIDI input and records those notes in a way we can use with VexFlow.  Records the pitch, start time,
-    and eventual end time, as in:
-
-    {
-        note: 60, // pitch, in this case middle C
-        start: 1234
-        end:   2234
-    }
+    A component designed to take input from an M-Audio Oxygen8 v2
 
     Adapted from the MIDI demo included with Flocking: https://github.com/colinbdclark/Flocking
 
@@ -19,31 +12,18 @@
 
     var environment = flock.init();
 
-    fluid.registerNamespace("fluid.lpiano.noteMidiInput");
+    fluid.registerNamespace("fluid.lpiano.oxygen8");
 
-    fluid.lpiano.noteMidiInput.startRecordingNote = function (that, midiNote) {
-        var notes = fluid.copy(that.model.notes);
-        var note = fluid.copy(midiNote);
-        note.start = Date.now();
-        notes.push(note);
-        that.applier.change("notes", notes);
+    fluid.lpiano.oxygen8.inspect = function (args) {
+        console.log(args.length, " arguments received...");
     };
 
-    fluid.lpiano.noteMidiInput.stopRecordingNote = function (that, midiNote) {
-        var notes = fluid.copy(that.model.notes);
-        var foundNote = false;
-        fluid.each(notes, function (note) {
-            if (foundNote) { return; }
-            if (note.note === midiNote.note && note.end === undefined) {
-                note.end = (new Date()).getTime();
-                note.ms  = note.end - note.start;
-                foundNote = true;
-            }
-        });
-        that.applier.change("notes", notes);
+    fluid.lpiano.oxygen8.bendPitch = function (that, midiInput) {
+        var bentPitch = that.synth.options.baseNote + (midiInput.value / 8192);
+        that.synth.set("freq.note", bentPitch);
     };
 
-    fluid.defaults("fluid.lpiano.noteMidiInput", {
+    fluid.defaults("fluid.lpiano.oxygen8", {
         gradeNames: ["fluid.modelComponent", "fluid.viewComponent"],
         model: {
             notes: []
@@ -55,13 +35,9 @@
                 container: "{that}.container",
                 options: {
                     model: {
-                        notes: "{noteMidiInput}.model.notes"
+                        notes: "{oxygen8}.model.notes"
                     },
                     listeners: {
-                        "noteOn.startRecordingNote": {
-                            funcName: "fluid.lpiano.noteMidiInput.startRecordingNote",
-                            args:     ["{that}" ,"{arguments}.0"]
-                        },
                         "noteOn.passToSynth": {
                             func: "{synth}.noteOn",
                             args: [
@@ -72,11 +48,11 @@
                                 }
                             ]
                         },
-                        "noteOn.stopRecordingNote": {
-                            funcName: "fluid.lpiano.noteMidiInput.stopRecordingNote",
-                            args:     ["{that}" ,"{arguments}.0"]
-                        },
                         "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)",
+                        "pitchbend.bendPitch": {
+                            funcName: "fluid.lpiano.oxygen8.bendPitch",
+                            args:     ["{oxygen8}", "{arguments}.0"]
+                        }
                     }
                 }
             },
@@ -91,35 +67,4 @@
             ]
         }
     });
-
-    fluid.defaults("fluid.lpiano.synth", {
-        gradeNames: ["flock.synth.polyphonic"],
-
-        synthDef: {
-            ugen: "flock.ugen.square",
-            freq: {
-                id: "freq",
-                ugen: "flock.ugen.midiFreq",
-                note: 60
-            },
-            mul: {
-                id: "env",
-                ugen: "flock.ugen.envGen",
-                envelope: {
-                    type: "flock.envelope.adsr",
-                    attack: 0.2,
-                    decay: 0.1,
-                    sustain: 1.0,
-                    release: 1.0
-                },
-                gate: 0.0,
-                mul: {
-                    id: "amp",
-                    ugen: "flock.ugen.midiAmp",
-                    velocity: 0
-                }
-            }
-        }
-    });
-
 })();
