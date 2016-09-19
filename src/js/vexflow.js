@@ -33,11 +33,10 @@
         // TODO:  Add support for beam annotation
         var beams = VF.Beam.generateBeams(notes);
         Vex.Flow.Formatter.FormatAndDraw(context, stave, notes);
-        beams.forEach(function(b) {b.setContext(context).draw()});
+        beams.forEach(function (b) { b.setContext(context).draw() });
     };
 
     fluid.lpiano.vexflow.buildStave = function (that, staveDef) {
-        // Create a stave of width 400 at position 10, 40 on the canvas.
         var stave = new VF.Stave(staveDef.xPos, staveDef.yPos, staveDef.width);
         fluid.each(that.options.staveFunctionMapping, function (fnName, propertyKey) {
             if (staveDef[propertyKey]) {

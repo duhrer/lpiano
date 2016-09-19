@@ -31,9 +31,19 @@
         <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
         <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
 
+        <!-- Onscreen Music Controls -->
+        <script src="../../node_modules/sisiliano/dist/sisiliano.js"></script>
+        <link href="../../node_modules/sisiliano/dist/sisiliano.min.css" rel="stylesheet"/>
+
+        <script src="../../node_modules/sisiliano/lib/handlebars/handlebars-1.0.rc.2.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/d3/d3.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/ace-builds/src-noconflict/ace.js"></script>
+
+
         <script src="../../src/js/vexflow.js"></script>
         <script src="../../src/js/transforms.js"></script>
         <script src="../../src/js/synth.js"></script>
+        <script src="../../src/js/sisiliano.js"></script>
         <script src="../../src/js/noteMidiInput.js"></script>
         <script src="../../src/js/transcriber.js"></script>
     </head>
@@ -43,7 +53,12 @@
             <h1>Note Transcriber Demo</h1>
             <p class="instructions">This demo transcribes notes and displays them using VexFlow.</p>
 
-            <div class="vexflow-container"></div>
+            <div class="vexflow-container">
+            </div>
+
+            <div class="box preview" style="height: 400px; width: 50%">
+                <div id="preview" style="width: 100%"></div>
+            </div>
 
             <p>Note:</p>
 
