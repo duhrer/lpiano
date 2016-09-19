@@ -31,18 +31,66 @@
         <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
         <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
 
+        <!-- Sisliano dependencies -->
+        <link rel="stylesheet" href="../../node_modules/sisiliano/dist/sisiliano.min.css"/>
+        <script src="../../node_modules/sisiliano/dist/sisiliano.js"></script>
+        <script src="../../node_modules/sisiliano/lib/handlebars/handlebars-1.0.rc.2.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/d3/d3.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/ace-builds/src-noconflict/ace.js"></script>
+
+        <!-- Foundation dependencies -->
+        <link rel="stylesheet" href="../../node_modules/foundation-sites/dist/foundation.css"/>
+        <script src="../../node_modules/foundation-sites/dist/foundation.js"></script>
+
+
         <script src="../../src/js/synth.js"></script>
         <script src="../../src/js/oxygen8.js"></script>
     </head>
 
     <body>
         <div class="oxygen8-container">
-            <h1>Oxygen8 Demo</h1>
-            <p class="instructions">A synth with controls configured to match an M-Audio Oxygen8 v2.</p>
+            <div class="row">
+                <h1>Oxygen8 Demo</h1>
+                <p class="instructions">A synth with controls configured to match an M-Audio Oxygen8 v2.</p>
+            </div>
+
+            <div class="row">
+                <div class="column small-3">
+                    <div id="knob5"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob6"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob7"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob8"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column small-3">
+                    <div id="knob1"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob2"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob3"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob4"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div id="input-selector"></div>
+            </div>
         </div>
 
         <script>
-            var noteMidiInput = fluid.lpiano.oxygen8(".oxygen8-container");
+            var oxygen8Component = fluid.lpiano.oxygen8(".oxygen8-container");
         </script>
     </body>
 </html>

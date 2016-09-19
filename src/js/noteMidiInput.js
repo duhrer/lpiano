@@ -43,6 +43,10 @@
         that.applier.change("notes", notes);
     };
 
+    fluid.lpiano.sisiliano.applyOffset = function (originalValue, offset) {
+        return originalValue + offset;
+    };
+
     fluid.defaults("fluid.lpiano.noteMidiInput", {
         gradeNames: ["fluid.modelComponent", "fluid.viewComponent"],
         model: {
@@ -77,6 +81,29 @@
                             args:     ["{that}" ,"{arguments}.0"]
                         },
                         "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)",
+                    }
+                }
+            },
+            piano: {
+                type: "fluid.lpiano.sisiliano",
+                container: "#preview",
+                options: {
+                    offset: 48,
+                    invokers: {
+                        applyOffset: {
+                            funcName: "fluid.lpiano.sisiliano.applyOffset",
+                            args: ["{arguments}.0", "{that}.options.offset"]
+                        }
+                    },
+                    listeners: {
+                        "onKeyPress.passToMidiConnector": {
+                            func: "{midiConnector}.events.noteOn.fire",
+                            args: [{ "note": "@expand:{that}.applyOffset({arguments}.0)", "velocity": "{arguments}.1"}]
+                        },
+                        "onKeyRelease.passToMidiConnector": {
+                            func: "{midiConnector}.events.noteOff.fire",
+                            args: [{ "note": "@expand:{that}.applyOffset({arguments}.0)"}]
+                        }
                     }
                 }
             },
