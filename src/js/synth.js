@@ -1,7 +1,7 @@
 /* globals fluid */
 /*
 
-    The synth used in most of the examples in this package.
+    The synth used in most of the examples in this package.  Supports static and variable pitch shifting.
 
  */
 (function () {
@@ -26,14 +26,31 @@
                 args: ["{that}", "{arguments}"]
             }
         },
+        pitchOffset: 0,
         mainUgen: "flock.ugen.squareOsc",
         synthDef: {
             ugen: "{that}.options.mainUgen",
             freq: {
-                id: "freq",
+                id:   "freq",
                 ugen: "flock.ugen.midiFreq",
-                note: 60
+                note: {
+                    id:   "fixedNoteOffset",
+                    ugen: "flock.ugen.value",
+                    add:  "{that}.options.pitchOffset"
+                }
             },
+            // freq: {
+            //     id: "variableNoteOffset",
+            //     ugen: "flock.ugen.value",
+            //     rate: "audio",
+            //     input: "fixed.offset",
+            //     freq: {
+            //         id: "fixedNoteOffset",
+            //         ugen: "flock.ugen.value",
+            //         add:  3
+            //     },
+            //     add: 0
+            // },
             mul: {
                 id: "preamp",
                 ugen: "flock.ugen.midiAmp",
@@ -53,7 +70,7 @@
                         mul: {
                             id: "mod",
                             ugen: "flock.ugen.sinOsc",
-                            freq: 20
+                            freq: 1
                         }
                     }
                 }

@@ -157,7 +157,7 @@
                             args: [
                                 "{arguments}.0.note",
                                 {
-                                    "freq.note": "{arguments}.0.note",
+                                    "fixedNoteOffset.value": "{arguments}.0.note",
                                     "amp.velocity": "{arguments}.0.velocity"
                                 }
                             ]
@@ -176,19 +176,22 @@
                         sin: {
                             type: "fluid.lpiano.synth",
                             options: {
-                                mainUgen: "flock.ugen.sinOsc"
+                                mainUgen: "flock.ugen.sinOsc",
+                                pitchOffset: -5
                             }
                         },
                         tri: {
                             type: "fluid.lpiano.synth",
                             options: {
-                                mainUgen: "flock.ugen.triOsc"
+                                mainUgen: "flock.ugen.triOsc",
+                                pitchOffset: 5
                             }
                         },
                         saw: {
                             type: "fluid.lpiano.synth",
                             options: {
-                                mainUgen: "flock.ugen.sawOsc"
+                                mainUgen: "flock.ugen.sawOsc",
+                                pitchOffset: 12
                             }
                         }
                     }
