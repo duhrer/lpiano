@@ -1,7 +1,14 @@
 /* globals fluid */
 (function () {
     "use strict";
-    fluid.defaults("fluid.lpiano.sisiliano", {
+
+    fluid.registerNamespace("lpiano.sisiliano");
+
+    lpiano.sisiliano.applyOffset = function (originalValue, offset) {
+        return originalValue + offset;
+    };
+
+    fluid.defaults("lpiano.sisiliano", {
         gradeNames: ["sisiliano.piano"],
         model: {
             color: "#FF0000",
@@ -31,6 +38,23 @@
                     start: 0,
                     end: 10
                 }
+            }
+        },
+        offset: 48,
+        invokers: {
+            applyOffset: {
+                funcName: "lpiano.sisiliano.applyOffset",
+                args: ["{arguments}.0", "{that}.options.offset"]
+            }
+        },
+        listeners: {
+            "onKeyPress.passToMidiConnector": {
+                func: "{midiConnector}.events.noteOn.fire",
+                args: [{ "note": "@expand:{that}.applyOffset({arguments}.0)", "velocity": "{arguments}.1"}]
+            },
+            "onKeyRelease.passToMidiConnector": {
+                func: "{midiConnector}.events.noteOff.fire",
+                args: [{ "note": "@expand:{that}.applyOffset({arguments}.0)"}]
             }
         }
     });

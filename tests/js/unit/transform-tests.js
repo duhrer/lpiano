@@ -43,7 +43,7 @@ jqUnit.test("Testing vexflow -> pitch (direct function call)...", function () {
     for (var a = 0; a < 132; a++) {
         var expectedPitch       = a;
         var keyValueToTransform = fluid.tests.lpiano.transforms.keys[a];
-        var computedPitch       =  fluid.lpiano.transforms.vexFlowToPitch(keyValueToTransform);
+        var computedPitch       =  lpiano.transforms.vexFlowToPitch(keyValueToTransform);
         jqUnit.assertEquals("The computed pitch should be correct...", expectedPitch, computedPitch);
     }
 });
@@ -51,7 +51,7 @@ jqUnit.test("Testing vexflow -> pitch (direct function call)...", function () {
 jqUnit.test("Testing pitch -> vexflow (direct function call)...", function () {
     for (var a = 0; a < 132; a++) {
         var expectedKey = fluid.tests.lpiano.transforms.keys[a];
-        var computedKey = fluid.lpiano.transforms.pitchToVexFlow(a);
+        var computedKey = lpiano.transforms.pitchToVexFlow(a);
         jqUnit.assertEquals("The computed key should be correct...", expectedKey, computedKey);
     }
 });
@@ -61,7 +61,7 @@ jqUnit.test("Testing vexflow -> pitch (transform)...", function () {
         return fluid.model.transformWithRules(key, {
             "": {
                 transform: {
-                    type:      "fluid.lpiano.transforms.vexFlowToPitch",
+                    type:      "lpiano.transforms.vexFlowToPitch",
                     inputPath: ""
                 }
             }
@@ -76,7 +76,7 @@ jqUnit.test("Testing pitch -> vexflow (transform)...", function () {
         return fluid.model.transformWithRules(pitch, {
             "": {
                 transform: {
-                    type:      "fluid.lpiano.transforms.pitchToVexFlow",
+                    type:      "lpiano.transforms.pitchToVexFlow",
                     inputPath: ""
                 }
             }

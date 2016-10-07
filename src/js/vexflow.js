@@ -16,16 +16,16 @@
 (function () {
     "use strict";
     var VF = Vex.Flow;
-    fluid.registerNamespace("fluid.lpiano.vexflow");
+    fluid.registerNamespace("lpiano.vexflow");
 
-    fluid.lpiano.vexflow.renderStave = function (that, staveDef) {
+    lpiano.vexflow.renderStave = function (that, staveDef) {
         var context = that.renderer.getContext();
-        var stave = fluid.lpiano.vexflow.buildStave(that, staveDef);
+        var stave = lpiano.vexflow.buildStave(that, staveDef);
 
         var notes = [];
 
         fluid.each(staveDef.notes, function (noteDef) {
-            var note = fluid.lpiano.vexflow.buildNote(that, noteDef);
+            var note = lpiano.vexflow.buildNote(that, noteDef);
             notes.push(note);
         });
         stave.setContext(context).draw();
@@ -36,7 +36,7 @@
         beams.forEach(function (b) { b.setContext(context).draw() });
     };
 
-    fluid.lpiano.vexflow.buildStave = function (that, staveDef) {
+    lpiano.vexflow.buildStave = function (that, staveDef) {
         var stave = new VF.Stave(staveDef.xPos, staveDef.yPos, staveDef.width);
         fluid.each(that.options.staveFunctionMapping, function (fnName, propertyKey) {
             if (staveDef[propertyKey]) {
@@ -48,7 +48,7 @@
         return stave;
     };
 
-    fluid.lpiano.vexflow.configureContext = function (that) {
+    lpiano.vexflow.configureContext = function (that) {
         var context = that.renderer.getContext();
         fluid.each(that.options.contextFunctionMapping, function (fnName, propKey) {
             var fnArgs = fluid.makeArray(that.options.contextOptions[propKey]);
@@ -56,7 +56,7 @@
         });
     };
 
-    fluid.lpiano.vexflow.buildKeys = function (that, noteDef) {
+    lpiano.vexflow.buildKeys = function (that, noteDef) {
         var keys = [];
         var keyDefs = fluid.makeArray(noteDef.keys);
         fluid.each(keyDefs, function (keyDef) {
@@ -66,13 +66,13 @@
         return keys;
     };
 
-    fluid.lpiano.vexflow.getKeyCustomizations = function (noteDef) {
+    lpiano.vexflow.getKeyCustomizations = function (noteDef) {
         return fluid.transform(noteDef.keys, function (value) {
             return value || {};
         });
     };
 
-    fluid.lpiano.vexflow.buildAnnotation = function (that, annotationDef) {
+    lpiano.vexflow.buildAnnotation = function (that, annotationDef) {
         var isString = typeof annotationDef === "string";
         var annotationText = isString ? annotationDef : annotationDef.text;
         var annotation = new VF.Annotation(annotationText);
@@ -89,8 +89,8 @@
         return annotation;
     };
 
-    fluid.lpiano.vexflow.buildNote = function (that, noteDef) {
-        var note_struct = { keys: fluid.lpiano.vexflow.buildKeys(that, noteDef), duration: noteDef.duration };
+    lpiano.vexflow.buildNote = function (that, noteDef) {
+        var note_struct = { keys: lpiano.vexflow.buildKeys(that, noteDef), duration: noteDef.duration };
         var note = new VF.StaveNote(note_struct);
 
         // Apply top-level functions to all keys
@@ -113,12 +113,12 @@
         // Annotation support for notes, pinned to the first note by default.
         if (noteDef.annotations) {
             fluid.each(fluid.makeArray(noteDef.annotations), function (annotationDef) {
-                note.addModifier(0, fluid.lpiano.vexflow.buildAnnotation(that, annotationDef));
+                note.addModifier(0, lpiano.vexflow.buildAnnotation(that, annotationDef));
             });
         }
 
         // Apply functions to individual keys
-        var keyOverrides = fluid.lpiano.vexflow.getKeyCustomizations(noteDef);
+        var keyOverrides = lpiano.vexflow.getKeyCustomizations(noteDef);
         fluid.each(keyOverrides, function (keyDef, index) {
             fluid.each(that.options.noteFunctionMapping, function (fnName, propKey) {
                 if (keyDef[propKey]) {
@@ -140,7 +140,7 @@
 
             if (keyDef.annotations) {
                 fluid.each(fluid.makeArray(keyDef.annotations), function (annotationDef) {
-                    note.addModifier(index, fluid.lpiano.vexflow.buildAnnotation(that, annotationDef));
+                    note.addModifier(index, lpiano.vexflow.buildAnnotation(that, annotationDef));
                 });
             }
         });
@@ -148,7 +148,7 @@
         return note;
     };
 
-    fluid.lpiano.vexflow.render = function (that) {
+    lpiano.vexflow.render = function (that) {
         var targetElement = document.querySelector(that.options.selector);
         targetElement.innerHTML = "";
 
@@ -156,22 +156,22 @@
         that.resize(that.options.rendererOptions.width, that.options.rendererOptions.height);
 
 
-        fluid.each(fluid.makeArray(that.options.staves), function (staveDef){
-            fluid.lpiano.vexflow.renderStave(that, staveDef);
+        fluid.each(fluid.makeArray(that.staves), function (staveDef){
+            lpiano.vexflow.renderStave(that, staveDef);
         });
     };
 
-    fluid.lpiano.vexflow.resize = function (that, width, height) {
+    lpiano.vexflow.resize = function (that, width, height) {
         that.renderer.resize(width, height);
     };
 
-    fluid.defaults("fluid.lpiano.vexflow", {
+    fluid.defaults("lpiano.vexflow", {
         gradeNames: ["fluid.component"],
         selector:   ".vexflow-container",
         rendererOptions: {
             backend: VF.Renderer.Backends.SVG,
             height: 250,
-            width: 500
+            width:  800
         },
         contextFunctionMapping: {
             "font": "setFont",
@@ -194,14 +194,16 @@
             justification: "setJustification", // A value in `Annotation.Justify`.
             verticalJustification: "setVerticalJustification" // A value in `Annotation.VerticalJustify`.
         },
-        staves: [],
+        members: {
+            staves: []
+        },
         invokers: {
             render: {
-                funcName: "fluid.lpiano.vexflow.render",
+                funcName: "lpiano.vexflow.render",
                 args:     ["{that}"]
             },
             resize: {
-                funcName: "fluid.lpiano.vexflow.resize",
+                funcName: "lpiano.vexflow.resize",
                 args:     ["{that}", "{arguments}.0", "{arguments}.1"]
             }
         }

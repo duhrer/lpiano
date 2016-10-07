@@ -1,7 +1,7 @@
 (function () {
     "use strict";
     fluid.defaults("fluid.tests.lpiano.vexflow", {
-        gradeNames: ["fluid.lpiano.vexflow"],
+        gradeNames: ["lpiano.vexflow"],
         listeners: {
             "onCreate.render": {
                 func: "{that}.render"

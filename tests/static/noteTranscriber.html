@@ -4,7 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>MIDI Note Recorder</title>
+        <title>MIDI Note Transcriber Demo...</title>
 
         <!-- Infusion dependencies -->
         <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
@@ -44,8 +44,9 @@
         <script src="../../src/js/transforms.js"></script>
         <script src="../../src/js/synth.js"></script>
         <script src="../../src/js/sisiliano.js"></script>
-        <script src="../../src/js/noteMidiInput.js"></script>
-        <script src="../../src/js/transcriber.js"></script>
+        <script src="../../src/js/noteTranscriber.js"></script>
+
+        <script src="./js/noteTranscriber-harness.js"></script>
     </head>
 
     <body>
@@ -72,7 +73,7 @@
         </div>
 
         <script>
-            var transcriber = fluid.lpiano.transcriber(".transcriber-container");
+            var transcriber = lpiano.tests.transcriber.harness(".transcriber-container");
         </script>
     </body>
 </html>

@@ -7,8 +7,8 @@
 (function () {
     "use strict";
 
-    fluid.registerNamespace("fluid.lpiano.synth");
-    fluid.lpiano.synth.set = function (that, args) {
+    fluid.registerNamespace("lpiano.synth");
+    lpiano.synth.set = function (that, args) {
         var nodes = that.nodeList.nodes;
         var results = [];
         fluid.each(nodes, function (node) {
@@ -18,11 +18,11 @@
         return results.length > 0 ? results[0] : undefined;
     };
 
-    fluid.defaults("fluid.lpiano.synth", {
+    fluid.defaults("lpiano.synth", {
         gradeNames: ["flock.synth.polyphonic"],
         invokers: {
             set: {
-                funcName: "fluid.lpiano.synth.set",
+                funcName: "lpiano.synth.set",
                 args: ["{that}", "{arguments}"]
             }
         },
@@ -39,18 +39,6 @@
                     add:  "{that}.options.pitchOffset"
                 }
             },
-            // freq: {
-            //     id: "variableNoteOffset",
-            //     ugen: "flock.ugen.value",
-            //     rate: "audio",
-            //     input: "fixed.offset",
-            //     freq: {
-            //         id: "fixedNoteOffset",
-            //         ugen: "flock.ugen.value",
-            //         add:  3
-            //     },
-            //     add: 0
-            // },
             mul: {
                 id: "preamp",
                 ugen: "flock.ugen.midiAmp",
