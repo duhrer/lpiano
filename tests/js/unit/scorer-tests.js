@@ -28,16 +28,18 @@ jqUnit.test("Test the deep matching function...", function () {
 
 
 jqUnit.test("Test the vexflow array transformation function...", function () {
-    jqUnit.assertDeepEq("Individual notes should be transformed correctly...", [["c/0"]], lpiano.scorer.notesToVexflow([{ pitch: 24}]));
+    jqUnit.assertDeepEq("Individual notes should be transformed correctly...", [{ keys: ["c/0"] }], lpiano.scorer.notesToVexflow([{ pitch: 24}]));
 
-    jqUnit.assertDeepEq("Arrays of notes should be transformed correctly...", [["c/0", "c/1"]], lpiano.scorer.notesToVexflow([[{ pitch: 24}, { pitch: 36 }]]));
+    jqUnit.assertDeepEq("Arrays of notes should be transformed correctly...", [{ keys: ["c/0", "c/1"] }], lpiano.scorer.notesToVexflow([[{ pitch: 24}, { pitch: 36 }]]));
 });
 
 // lpiano.scorer.scoreNotes (transcribedNotes, expectedNotes)
 jqUnit.test("Test the scoreNotes static function...", function () {
-    jqUnit.assertDeepEq("A perfect sequence of played notes should all be recognized...", [["c/0"], ["c/1"], ["c/2"]], lpiano.scorer.scoreNotes([["c/0"], ["c/1"], ["c/2"]], [["c/0"], ["c/1"], ["c/2"]]));
+    var doReMi = [{ keys: ["c/0"] }, { keys: ["d/0"]}, { keys: ["e/0"]}];
 
-    jqUnit.assertDeepEq("A sequence with a mixture of right and wrong notes should result in the expected `correct` notes....", [["c/0"], ["c/1"]], lpiano.scorer.scoreNotes([["c/2"], ["c/0"], ["c/2"], ["c/1"]], [["c/0"], ["c/1"], ["c/2"]]));
+    jqUnit.assertDeepEq("A perfect sequence of played notes should all be recognized...", doReMi, lpiano.scorer.scoreNotes(doReMi, doReMi));
 
-    jqUnit.assertDeepEq("An empty transcript should not have any `correct` notes....", [], lpiano.scorer.scoreNotes([], [["c/0"], ["c/1"], ["c/2"]]));
+    jqUnit.assertDeepEq("A sequence with a mixture of right and wrong notes should result in the expected `correct` notes....", [{ keys: ["c/0"] }, { keys: ["d/0"] }], lpiano.scorer.scoreNotes([{ keys: ["e/0"] }, { keys: ["c/0"] }, { keys: ["e/0"] }, { keys: ["d/0"] }], doReMi));
+
+    jqUnit.assertDeepEq("An empty transcript should not have any `correct` notes....", [], lpiano.scorer.scoreNotes([], doReMi));
 });

@@ -51,7 +51,7 @@ jqUnit.test("Testing vexflow -> pitch (direct function call)...", function () {
 jqUnit.test("Testing pitch -> vexflow (direct function call)...", function () {
     for (var a = 0; a < 132; a++) {
         var expectedKey = fluid.tests.lpiano.transforms.keys[a];
-        var computedKey = lpiano.transforms.pitchToVexFlow(a);
+        var computedKey = lpiano.transforms.pitchToVexflowKey(a);
         jqUnit.assertEquals("The computed key should be correct...", expectedKey, computedKey);
     }
 });

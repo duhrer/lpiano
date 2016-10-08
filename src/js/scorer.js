@@ -59,11 +59,27 @@ lpiano.scorer.deepMatch = function (candidate1, candidate2) {
     return true;
 };
 
+/*
+    Go from a transcript of MIDI notes and pitches to vexFlow stave notation, such that [24, 26] becomes:
+
+    [
+        {
+            keys: ["c/0"]
+        },
+        {
+            keys: ["d/0"]
+        }
+    ]
+
+    Does not currently make any attempt to detect the timing and assign a length to notes.
+
+ */
 lpiano.scorer.notesToVexflow = function (groupedNotes) {
     return fluid.transform(groupedNotes, function (singleNoteOrChord) {
-        return fluid.transform(fluid.makeArray(singleNoteOrChord), function (note) {
-            return lpiano.transforms.pitchToVexFlow(note.pitch);
+        var keys = fluid.transform(fluid.makeArray(singleNoteOrChord), function (note) {
+            return lpiano.transforms.pitchToVexflowKey(note.pitch);
         });
+        return { keys: keys };
     });
 };
 
@@ -72,7 +88,7 @@ lpiano.scorer.scoreNotes = function (transcribedNotes, expectedNotes) {
     var correctNotes = [];
     fluid.each(transcribedNotes, function (playedVexflowGroup) {
         var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
-        if (lpiano.scorer.deepMatch(playedVexflowGroup, nextExpectedNoteGroup)) {
+        if (lpiano.scorer.deepMatch(playedVexflowGroup.keys, nextExpectedNoteGroup.keys)) {
             correctNotes.push(playedVexflowGroup);
         }
     });

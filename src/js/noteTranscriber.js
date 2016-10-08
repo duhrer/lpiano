@@ -108,7 +108,7 @@
         var staff = that.staves[0];
         staff.notes = fluid.transform(groupedNotes.slice(-1 * that.options.lastNotesToDisplay), function (midiNoteGroup) {
             var keys = fluid.transform(midiNoteGroup.sort(lpiano.transcriber.sortByPitch), function (midiNote) {
-                var vexFlowNote = lpiano.transforms.pitchToVexFlow(midiNote.note);
+                var vexFlowNote = lpiano.transforms.pitchToVexflowKey(midiNote.note);
                 var key = { key: vexFlowNote };
                 if (vexFlowNote.indexOf("#") !== -1) {
                     key.accidentals = "#"
