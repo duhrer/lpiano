@@ -9,7 +9,8 @@
  */
 // TODO: Eventually, we should allow for "missed" notes, so that A-B-rest-D would only miss one note when compared to A-B-C-D.
 /* eslint-env node */
-var fluid = require("infusion");
+"use strict";
+var fluid = fluid || require("infusion");
 var lpiano = fluid.registerNamespace("lpiano");
 
 // Marker grade for "good" synth
@@ -22,7 +23,6 @@ fluid.defaults("lpiano.scorer.synths.bad", {
     gradeNames: ["lpiano.synth"],
     mainUgen: "flock.ugen.sawOsc" // TODO:  Make this very dull and as wooden as possible.
 });
-
 
 fluid.registerNamespace("lpiano.scorer");
 
@@ -59,32 +59,42 @@ lpiano.scorer.deepMatch = function (candidate1, candidate2) {
     return true;
 };
 
-// Score the transcript and update playedNotes whenever the transcriber updates the 'notes'...
-lpiano.scorer.scoreNotes = function (that) {
-    var playedNotes = [];
+lpiano.scorer.notesToVexflow = function (groupedNotes) {
+    return fluid.transform(groupedNotes, function (singleNoteOrChord) {
+        return fluid.transform(fluid.makeArray(singleNoteOrChord), function (note) {
+            return lpiano.transforms.pitchToVexFlow(note.pitch);
+        });
+    });
+};
 
-    // Group the raw transcript so that we can match chords.
-    var groupedTranscript = lpiano.transcriber.groupNotes(that);
-
-    // Go through expected notes and tick off any we've matched, skipping errors.
-    fluid.each(groupedTranscript, function (playedNoteGroup) {
-        var playedVexflowGroup = fluid.transform(playedNoteGroup, lpiano.transforms.pitchToVexFlow);
-        for (var a = playedNotes.length; a < that.options.expectedNotes.length; a++ ) {
-            var nextExpectedNoteGroup = that.options.expectedNotes[a];
-            if (lpiano.scorer.deepMatch(playedVexflowGroup, nextExpectedNoteGroup)) {
-                playedNotes.push(playedVexflowGroup);
-            }
+lpiano.scorer.scoreNotes = function (transcribedNotes, expectedNotes) {
+    // Go through expected notes and tick off any we've matched, skipping errors (for now).
+    var correctNotes = [];
+    fluid.each(transcribedNotes, function (playedVexflowGroup) {
+        var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
+        if (lpiano.scorer.deepMatch(playedVexflowGroup, nextExpectedNoteGroup)) {
+            correctNotes.push(playedVexflowGroup);
         }
     });
 
-    that.playedNotes = playedNotes;
+    return correctNotes;
+};
+
+// Score the transcript and update correctNotes whenever the transcriber updates the 'notes'...
+lpiano.scorer.groupTransformAndScore = function (that) {
+
+    // Group the raw transcript so that we can match chords.
+    var groupedTranscript = lpiano.transcriber.groupNotes(that);
+    var vexflowTranscript = lpiano.scorer.notesToVexflow(groupedTranscript);
+
+    that.correctNotes = lpiano.scorer.scoreNotes(vexflowTranscript, that.options.expectedNotes);
 };
 
 
 fluid.defaults("lpiano.scorer", {
     gradeNames: ["flock.band", "lpiano.transcriber"],
     members: {
-        playedNotes: [],
+        correctNotes: [],
     },
     expectedNotes: [],
     invokers: {
@@ -107,7 +117,7 @@ fluid.defaults("lpiano.scorer", {
     },
     modelListeners: {
         "notes": {
-            funcName:      "lpiano.scorer.scoreNotes",
+            funcName:      "lpiano.scorer.groupTransformAndScore",
             args:          ["{that}"],
             excludeSource: "init"
         }

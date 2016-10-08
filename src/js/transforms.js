@@ -5,7 +5,8 @@
  */
 /* eslint-env node */
 "use strict";
-var fluid = fluid || require("infusion");
+var fluid  = fluid || require("infusion");
+var lpiano = fluid.registerNamespace("lpiano");
 
 fluid.registerNamespace("lpiano.transforms");
 
