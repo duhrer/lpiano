@@ -26,6 +26,23 @@ fluid.defaults("lpiano.scorer.synths.bad", {
 
 fluid.registerNamespace("lpiano.scorer");
 
+lpiano.scorer.noteInNoteGroup = function (note, noteGroup) {
+    var matches = false;
+
+    if (note) {
+        // The incoming note is a MIDI note/pitch.  We must convert it to a vexflow key, ala C/1, D#/2.
+        var vexflowKey = lpiano.transforms.pitchToVexflowKey(note);
+
+        fluid.each(fluid.makeArray(noteGroup.keys), function (expectedKey) {
+            if (!matches && (expectedKey.toLowerCase() === vexflowKey.toLowerCase())) {
+                matches = true;
+            }
+        });
+    }
+
+    return matches;
+};
+
 /**
  *
  * Route a noteOn or noteOff to a different set of synths depending on whether it's "good" or "bad".
@@ -34,10 +51,15 @@ fluid.registerNamespace("lpiano.scorer");
  * @param fnName
  * @param args
  */
-lpiano.scorer.routeNote = function (that, fnName, args) {
-    var expectedNote = fluid.makeArray(that.options.expectedNotes[that.playedNotes.length]);
+lpiano.scorer.routeFnCallToSynth = function (that, fnName, args) {
+    var destGrade = that.options.allSynthsGrade;
 
-    var destGrade = expectedNote.indexOf(args[0].note) !== -1 ? that.options.goodSynthGrade : that.options.badSynthGrade;
+    if ("noteOn" === fnName) {
+        var expectedNoteGroup = that.options.expectedNotes[that.model.correctNotes.length];
+
+        destGrade = lpiano.scorer.noteInNoteGroup(args[0], expectedNoteGroup) ? that.options.goodSynthGrade : that.options.badSynthGrade;
+    }
+
     lpiano.band.sendToComponentsWithGrade(that, fnName, destGrade, args);
 };
 
@@ -51,7 +73,7 @@ lpiano.scorer.deepMatch = function (candidate1, candidate2) {
     }
 
     for (var a = 0; a < array1.length; a++) {
-        if (array1[a] !== array2[a]) {
+        if (array1[a].toLowerCase() !== array2[a].toLowerCase()) {
             return false;
         }
     }
@@ -77,9 +99,9 @@ lpiano.scorer.deepMatch = function (candidate1, candidate2) {
 lpiano.scorer.notesToVexflow = function (groupedNotes) {
     return fluid.transform(groupedNotes, function (singleNoteOrChord) {
         var keys = fluid.transform(fluid.makeArray(singleNoteOrChord), function (note) {
-            return lpiano.transforms.pitchToVexflowKey(note.pitch);
+            return lpiano.transforms.pitchToVexflowKey(note["freq.note"]);
         });
-        return { keys: keys };
+        return { duration: "q", keys: keys };
     });
 };
 
@@ -87,6 +109,7 @@ lpiano.scorer.scoreNotes = function (transcribedNotes, expectedNotes) {
     // Go through expected notes and tick off any we've matched, skipping errors (for now).
     var correctNotes = [];
     fluid.each(transcribedNotes, function (playedVexflowGroup) {
+        // TODO: Make some kind of handling for when the song is completed successfully.  Right now we end up with an array out of bounds.xz   
         var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
         if (lpiano.scorer.deepMatch(playedVexflowGroup.keys, nextExpectedNoteGroup.keys)) {
             correctNotes.push(playedVexflowGroup);
@@ -103,24 +126,95 @@ lpiano.scorer.groupTransformAndScore = function (that) {
     var groupedTranscript = lpiano.transcriber.groupNotes(that);
     var vexflowTranscript = lpiano.scorer.notesToVexflow(groupedTranscript);
 
-    that.correctNotes = lpiano.scorer.scoreNotes(vexflowTranscript, that.options.expectedNotes);
+    that.applier.change("correctNotes", lpiano.scorer.scoreNotes(vexflowTranscript, that.options.expectedNotes));
+};
+
+/**
+ *
+ * A function that generates a single annotated "scoreboard" set of notes based on:
+ *
+ * 1. The notes that have been played correctly.
+ * 2. The overall set of expected notes.
+ *
+ * From that, it generates a set of notes that consists of:
+ *
+ * 1. Any notes that have been played correctly, highlighted in one color.
+ * 2. The note(s) that should be played next, highlighted in another.
+ * 3. The notes remaining to be played, highlighted in a third color.
+ *
+ * @param that
+ */
+lpiano.scorer.generateScoreboard = function (that) {
+    var annotatedNotes = [];
+
+    // "that.model.correctNotes", "that.options.expectedNotes", "that.options.playedStyles", "that.options.currentNoteStyles", "that.options.unplayedStyles"
+    
+    if (that.model.correctNotes) {
+        var annotatedCorrectNotes = fluid.transform(that.model.correctNotes, function (note) {
+            note.keyStyle = that.options.playedStyles;
+            return note;
+        });
+
+        annotatedNotes = annotatedNotes.concat(annotatedCorrectNotes);
+    }
+
+    if (annotatedNotes.length < that.options.expectedNotes.length) {
+        var annotatedCurrentNote = fluid.copy(that.options.expectedNotes[annotatedNotes.length]);
+
+        annotatedCurrentNote.keyStyle = that.options.currentNoteStyles;
+
+        annotatedNotes = annotatedNotes.concat(annotatedCurrentNote);
+    }
+
+    if ((that.options.expectedNotes.length - annotatedNotes.length) > 0) {
+        var annotatedUnplayedNotes = fluid.transform(that.options.expectedNotes.slice(annotatedNotes.length), function (note) {
+            note.keyStyle = that.options.unplayedStyles;
+            return note;
+        });
+
+        annotatedNotes = annotatedNotes.concat(annotatedUnplayedNotes);
+    }
+
+    that.applier.change("scoreboard.notes", annotatedNotes);
 };
 
 
+
 fluid.defaults("lpiano.scorer", {
-    gradeNames: ["flock.band", "lpiano.transcriber"],
-    members: {
+    gradeNames: ["flock.band", "flock.noteTarget", "lpiano.transcriber"],
+    model: {
         correctNotes: [],
+        scoreboard: {
+            notes: "{that}.options.expectedNotes"
+        }
     },
-    expectedNotes: [],
+    expectedNotes:     [],
+    playedStyles:      { shadowBlur:15, shadowColor:"grey", fillStyle:"grey" },
+    currentNoteStyles: { shadowBlur:15, shadowColor:"red", fillStyle:"red" },
+    unplayedStyles:    { shadowBlur:15, shadowColor:"blue", fillStyle:"blue" },
+    allSynthsGrade:    "lpiano.synth",
+    goodSynthGrade:    "lpiano.scorer.synths.good",
+    badSynthGrade:     "lpiano.scorer.synths.bad",
     invokers: {
         noteOn: {
-            funcName: "lpiano.scorer.routeNote",
+            funcName: "lpiano.scorer.routeFnCallToSynth",
             args: ["{that}", "noteOn", "{arguments}"]
         },
         noteOff: {
-            funcName: "lpiano.scorer.routeNote",
+            funcName: "lpiano.scorer.routeFnCallToSynth",
             args: ["{that}", "noteOff", "{arguments}"]
+        },
+        set: {
+            funcName: "lpiano.scorer.routeFnCallToSynth",
+            args: ["{that}", "set", "{arguments}"]
+        }
+    },
+    listeners: {
+        "noteOn.routeToSynth": {
+            func: "{that}.noteOn"
+        },
+        "noteOff.routeToSynth": {
+            func: "{that}.noteOff"
         }
     },
     components: {
@@ -136,8 +230,10 @@ fluid.defaults("lpiano.scorer", {
             funcName:      "lpiano.scorer.groupTransformAndScore",
             args:          ["{that}"],
             excludeSource: "init"
+        },
+        "correctNotes": {
+            funcName:      "lpiano.scorer.generateScoreboard",
+            args:          ["{that}"]
         }
     }
 });
-
-// TODO:  Write the test harness and page for this and test manually

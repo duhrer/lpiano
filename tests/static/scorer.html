@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MIDI Note Transcriber Demo...</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDebugging.js"></script>
+        <script src="../../node_modules/infusion/src/framework/enhancement/js/ContextAwareness.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- Flocking dependencies -->
+        <script src="../../node_modules/flocking/dist/flocking-all.js"></script>
+        <script src="../../node_modules/flocking/src/ui/selectbox/js/selectbox.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
+
+        <!-- Onscreen Music Controls -->
+        <script src="../../node_modules/sisiliano/dist/sisiliano.js"></script>
+        <link href="../../node_modules/sisiliano/dist/sisiliano.min.css" rel="stylesheet"/>
+
+        <script src="../../node_modules/sisiliano/lib/handlebars/handlebars-1.0.rc.2.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/d3/d3.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/ace-builds/src-noconflict/ace.js"></script>
+
+
+        <script src="../../src/js/vexflow.js"></script>
+        <script src="../../src/js/transforms.js"></script>
+        <script src="../../src/js/synth.js"></script>
+        <script src="../../src/js/sisiliano.js"></script>
+        <script src="../../src/js/noteTranscriber.js"></script>
+        <script src="../../src/js/band.js"></script>
+        <script src="../../src/js/scorer.js"></script>
+        <script src="../../src/js/songs.js"></script>
+
+        <script src="./js/scorer-harness.js"></script>
+    </head>
+
+    <body>
+        <div class="scorer-container">
+            <h1>"Scorer" Demo</h1>
+            <p class="instructions">This demo compares the notes played to an "expected" tune.  Only the next expected note(s) play true.</p>
+
+            <div class="vexflow-container">
+            </div>
+
+            <div class="box preview" style="height: 400px; width: 50%">
+                <div id="preview" style="width: 100%"></div>
+            </div>
+        </div>
+
+        <script>
+            var scorer = lpiano.tests.scorer.harness(".scorer-container");
+        </script>
+    </body>
+</html>

@@ -96,7 +96,7 @@
         // Apply top-level functions to all keys
         fluid.each(that.options.noteFunctionMapping, function (fnName, propKey) {
             if (noteDef[propKey]) {
-                for (var index = 0; index < noteDef.keys.length; index++) {
+                for (var index = 0; index < fluid.makeArray(noteDef.keys).length; index++) {
                     var fnArgs = [index].concat(fluid.makeArray(noteDef[propKey]));
                     note[fnName].apply(note, fnArgs);
                 }
@@ -156,7 +156,7 @@
         that.resize(that.options.rendererOptions.width, that.options.rendererOptions.height);
 
 
-        fluid.each(fluid.makeArray(that.staves), function (staveDef){
+        fluid.each(fluid.makeArray(that.model.staves), function (staveDef){
             lpiano.vexflow.renderStave(that, staveDef);
         });
     };
@@ -166,7 +166,7 @@
     };
 
     fluid.defaults("lpiano.vexflow", {
-        gradeNames: ["fluid.component"],
+        gradeNames: ["fluid.modelComponent"],
         selector:   ".vexflow-container",
         rendererOptions: {
             backend: VF.Renderer.Backends.SVG,
@@ -194,7 +194,7 @@
             justification: "setJustification", // A value in `Annotation.Justify`.
             verticalJustification: "setVerticalJustification" // A value in `Annotation.VerticalJustify`.
         },
-        members: {
+        model: {
             staves: []
         },
         invokers: {
@@ -205,6 +205,17 @@
             resize: {
                 funcName: "lpiano.vexflow.resize",
                 args:     ["{that}", "{arguments}.0", "{arguments}.1"]
+            }
+        },
+        listeners: {
+            "onCreate.render": {
+                func: "{that}.render"
+            }
+        },
+        modelListeners: {
+            "staves": {
+                func: "{that}.render",
+                excludeSource: "init"
             }
         }
     })

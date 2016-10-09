@@ -10,20 +10,20 @@
 
     fluid.registerNamespace("lpiano.transcriber");
 
-    lpiano.transcriber.startRecordingNote = function (that, midiNote) {
+    lpiano.transcriber.startRecordingNote = function (that, noteDef) {
         var notes = fluid.copy(that.model.notes);
-        var note = fluid.copy(midiNote);
+        var note = fluid.copy(noteDef);
         note.start = Date.now();
         notes.push(note);
         that.applier.change("notes", notes);
     };
 
-    lpiano.transcriber.stopRecordingNote = function (that, midiNote) {
+    lpiano.transcriber.stopRecordingNote = function (that, noteDef) {
         var notes = fluid.copy(that.model.notes);
         var foundNote = false;
         fluid.each(notes, function (note) {
             if (foundNote) { return; }
-            if (note.note === midiNote.note && note.end === undefined) {
+            if (note.note === noteDef.note && note.end === undefined) {
                 note.end = (new Date()).getTime();
                 note.ms  = note.end - note.start;
                 foundNote = true;
@@ -33,7 +33,7 @@
     };
 
     fluid.defaults("lpiano.transcriber", {
-        gradeNames: ["fluid.component"],
+        gradeNames: ["fluid.modelComponent"],
         lastNotesToDisplay: 8,
         groupingCutoff: 25, // ms
         model: {
@@ -42,11 +42,11 @@
         listeners: {
             "noteOn.startRecordingNote": {
                 funcName: "lpiano.transcriber.startRecordingNote",
-                args:     ["{that}" ,"{arguments}.0"]
+                args:     ["{that}" ,"{arguments}.0"] // noteDef
             },
-            "noteOn.stopRecordingNote": {
+            "noteOff.stopRecordingNote": {
                 funcName: "lpiano.transcriber.stopRecordingNote",
-                args:     ["{that}" ,"{arguments}.0"]
+                args:     ["{that}" ,"{arguments}.0"] // noteDef
             }
         }
     });
@@ -105,7 +105,7 @@
     lpiano.transcriber.staves.notesToStaves = function (that) {
         var groupedNotes = lpiano.transcriber.groupNotes(that);
 
-        var staff = that.staves[0];
+        var staff = that.model.staves[0];
         staff.notes = fluid.transform(groupedNotes.slice(-1 * that.options.lastNotesToDisplay), function (midiNoteGroup) {
             var keys = fluid.transform(midiNoteGroup.sort(lpiano.transcriber.sortByPitch), function (midiNote) {
                 var vexFlowNote = lpiano.transforms.pitchToVexflowKey(midiNote.note);
@@ -126,28 +126,26 @@
             };
         });
 
+        var staves = fluid.copy(that.model.staves);
+        staves[0]  = staff;
+        that.applier.change("staves", staves);
+
         that.render();
     };
 
     fluid.defaults("lpiano.transcriber.staves", {
-        gradeNames: ["lpiano.vexflow", "fluid.modelComponent"],
+        gradeNames: ["lpiano.vexflow"],
         lastNotesToDisplay: 24,
         groupingCutoff: 50, // ms
-        members: {
+        model: {
+            notes:[],
             staves: [{
-                // TODO: Figure out how to make this wider
                 width: 700,
                 xPos:  10,
                 yPos:  40,
                 clef: "treble",
-                // timeSignature: "4/4",
                 notes: []
             }]
-        },
-        listeners: {
-            "onCreate.render": {
-                func: "{that}.render"
-            }
         },
         modelListeners: {
             "notes": {
