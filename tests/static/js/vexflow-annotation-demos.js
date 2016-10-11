@@ -4,12 +4,7 @@
     fluid.defaults("fluid.tests.lpiano.vexflow.annotation.fontSize", {
         gradeNames: ["fluid.tests.lpiano.vexflow"],
         selector:   ".vexflow-annotation-fontsize-container",
-        staves: {
-            width: 400,
-            xPos:  10,
-            yPos:  40,
-            clef: "treble",
-            timeSignature: "4/4",
+        model: {
             notes: [
                 {
                     duration: "q",
@@ -50,12 +45,7 @@
     fluid.defaults("fluid.tests.lpiano.vexflow.annotation.fontFamily", {
         gradeNames: ["fluid.tests.lpiano.vexflow"],
         selector:   ".vexflow-annotation-fontfamily-container",
-        staves: {
-            width: 400,
-            xPos:  10,
-            yPos:  40,
-            clef: "treble",
-            timeSignature: "4/4",
+        model: {
             notes: [
                 {
                     duration: "q",
@@ -80,12 +70,7 @@
     fluid.defaults("fluid.tests.lpiano.vexflow.annotation.justify", {
         gradeNames: ["fluid.tests.lpiano.vexflow"],
         selector:   ".vexflow-annotation-justify-container",
-        staves: {
-            width: 400,
-            xPos:  10,
-            yPos:  40,
-            clef: "treble",
-            timeSignature: "4/4",
+        model: {
             notes: [
                 {
                     duration: "q",
@@ -110,12 +95,7 @@
     fluid.defaults("fluid.tests.lpiano.vexflow.annotation.verticalJustify", {
         gradeNames: ["fluid.tests.lpiano.vexflow"],
         selector:   ".vexflow-annotation-verticaljustify-container",
-        staves: {
-            width: 400,
-            xPos:  10,
-            yPos:  40,
-            clef: "treble",
-            timeSignature: "4/4",
+        model: {
             notes: [
                 {
                     duration: "q",

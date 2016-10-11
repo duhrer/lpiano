@@ -22,16 +22,23 @@
         var context = that.renderer.getContext();
         var stave = lpiano.vexflow.buildStave(that, staveDef);
 
-        var notes = [];
-
-        fluid.each(staveDef.notes, function (noteDef) {
-            var note = lpiano.vexflow.buildNote(that, noteDef);
-            notes.push(note);
-        });
         stave.setContext(context).draw();
 
-        // TODO:  Add support for beam annotation
-        var beams = VF.Beam.generateBeams(notes);
+        var notes = fluid.copy(staveDef.notes);
+        staveDef.notes = [];
+
+        fluid.each(notes, function (note) {
+            note.setContext(context).setStave(stave);
+            var tickContext = new VF.TickContext();
+            tickContext.addTickable(note).preFormat();
+            /*
+             note.draw();
+             */
+
+        });
+
+        // TODO:  Test support for beam annotation
+        var beams = VF.Beam.generateBeams(staveDef.notes);
         Vex.Flow.Formatter.FormatAndDraw(context, stave, notes);
         beams.forEach(function (b) { b.setContext(context).draw() });
     };
@@ -97,8 +104,7 @@
         fluid.each(that.options.noteFunctionMapping, function (fnName, propKey) {
             if (noteDef[propKey]) {
                 for (var index = 0; index < fluid.makeArray(noteDef.keys).length; index++) {
-                    var fnArgs = [index].concat(fluid.makeArray(noteDef[propKey]));
-                    note[fnName].apply(note, fnArgs);
+                    note[fnName](index, noteDef[propKey]);
                 }
             }
         });
@@ -122,8 +128,7 @@
         fluid.each(keyOverrides, function (keyDef, index) {
             fluid.each(that.options.noteFunctionMapping, function (fnName, propKey) {
                 if (keyDef[propKey]) {
-                    var fnArgs = [index].concat(fluid.makeArray(keyDef[propKey]));
-                    note[fnName].apply(note, fnArgs);
+                    note[fnName](index, keyDef[propKey]);
                 }
             });
 
@@ -148,6 +153,59 @@
         return note;
     };
 
+    lpiano.vexflow.timeSignatureToBeats = function (timeSignatureString) {
+        return parseInt(timeSignatureString.substring(0,1), 10);
+    };
+
+    // Convert our model notes into one or more staves.
+    lpiano.vexflow.notesToStaves = function (that) {
+        // Get the time signature
+        var beatsPerBar = lpiano.vexflow.timeSignatureToBeats(that.options.staveOptions.timeSignature);
+
+        // convert to ticks, 3/4 time is 4096 * 3 ticks, see https://github.com/0xfe/vexflow/blob/master/src/tables.js#L506
+        var ticksPerBar = beatsPerBar * 4096;
+
+        var staveNotes = [];
+        var currentStaveNotes = [];
+        staveNotes.push(currentStaveNotes);
+
+        // Break down the notes into staves by the number of ticks, and into bars as well.
+        var staveTicks = 0;
+        var barTicks   = 0;
+        fluid.each(that.model.notes, function (note) {
+            if (note.duration) {
+                var noteTicks = VF.durationToTicks(note.duration);
+
+                if ((staveTicks + noteTicks) > that.options.ticksPerStave) {
+                    currentStaveNotes = [];
+                    staveNotes.push(currentStaveNotes);
+                    staveTicks = 0;
+                    barTicks   = 0;
+
+                }
+                else if ((barTicks + noteTicks) > ticksPerBar) {
+                    currentStaveNotes.push(new VF.BarNote(VF.Barline.SINGLE));
+                    barTicks = 0;
+                }
+
+                staveTicks += noteTicks;
+                barTicks   += noteTicks;
+            }
+            currentStaveNotes.push(lpiano.vexflow.buildNote(that, note));
+        });
+
+        // Generate the final staves.
+        var generatedStaves = [];
+        for (var stave = 0; stave < staveNotes.length; stave++) {
+            var currentStaveOptions = fluid.copy(that.options.staveOptions);
+            currentStaveOptions.yPos += 100 * stave;
+            currentStaveOptions.notes = staveNotes[stave];
+            generatedStaves.push(currentStaveOptions);
+        }
+
+        return generatedStaves;
+    };
+
     lpiano.vexflow.render = function (that) {
         var targetElement = document.querySelector(that.options.selector);
         targetElement.innerHTML = "";
@@ -155,8 +213,7 @@
         that.renderer = new VF.Renderer(targetElement, that.options.rendererOptions.backend);
         that.resize(that.options.rendererOptions.width, that.options.rendererOptions.height);
 
-
-        fluid.each(fluid.makeArray(that.model.staves), function (staveDef){
+        fluid.each(lpiano.vexflow.notesToStaves(that), function (staveDef){
             lpiano.vexflow.renderStave(that, staveDef);
         });
     };
@@ -168,9 +225,10 @@
     fluid.defaults("lpiano.vexflow", {
         gradeNames: ["fluid.modelComponent"],
         selector:   ".vexflow-container",
+        ticksPerStave: 65536, // 4 whole notes per stave
         rendererOptions: {
             backend: VF.Renderer.Backends.SVG,
-            height: 250,
+            height: 384,
             width:  800
         },
         contextFunctionMapping: {
@@ -180,6 +238,13 @@
         contextOptions: {
             font: ["Arial", 10, ""],
             backgroundFillStyle: "#eed"
+        },
+        staveOptions:             {
+            width: 768,
+            xPos:  10,
+            yPos:  10,
+            clef: "treble",
+            timeSignature: "4/4"
         },
         staveFunctionMapping: {
             clef: "addClef",
@@ -195,7 +260,7 @@
             verticalJustification: "setVerticalJustification" // A value in `Annotation.VerticalJustify`.
         },
         model: {
-            staves: []
+            notes: []
         },
         invokers: {
             render: {
@@ -213,7 +278,7 @@
             }
         },
         modelListeners: {
-            "staves": {
+            "notes": {
                 func: "{that}.render",
                 excludeSource: "init"
             }

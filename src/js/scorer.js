@@ -21,7 +21,12 @@ fluid.defaults("lpiano.scorer.synths.good", {
 // "bad" synth, which sounds, well, bad....
 fluid.defaults("lpiano.scorer.synths.bad", {
     gradeNames: ["lpiano.synth"],
-    mainUgen: "flock.ugen.sawOsc" // TODO:  Make this very dull and as wooden as possible.
+    mainUgen: "flock.ugen.sawOsc",
+    synthDef: {
+        mul: {
+            velocity: 10
+        }
+    }
 });
 
 fluid.registerNamespace("lpiano.scorer");
@@ -52,12 +57,16 @@ lpiano.scorer.noteInNoteGroup = function (note, noteGroup) {
  * @param args
  */
 lpiano.scorer.routeFnCallToSynth = function (that, fnName, args) {
-    var destGrade = that.options.allSynthsGrade;
+    var destGrade = that.options.goodSynthGrade;
 
-    if ("noteOn" === fnName) {
+    // TODO: Refactor this.  The first "good" note does not play, and the second note seems to echo.
+    if (fnName !== "noteOff" && (that.options.expectedNotes.length > that.model.correctNotes.length)) {
         var expectedNoteGroup = that.options.expectedNotes[that.model.correctNotes.length];
-
-        destGrade = lpiano.scorer.noteInNoteGroup(args[0], expectedNoteGroup) ? that.options.goodSynthGrade : that.options.badSynthGrade;
+        var notePitch = args[0]["freq.note"] || args[0];
+        var noteInNoteGroup = lpiano.scorer.noteInNoteGroup(notePitch, expectedNoteGroup);
+        if (!noteInNoteGroup) {
+            destGrade = that.options.badSynthGrade;
+        }
     }
 
     lpiano.band.sendToComponentsWithGrade(that, fnName, destGrade, args);
@@ -109,7 +118,7 @@ lpiano.scorer.scoreNotes = function (transcribedNotes, expectedNotes) {
     // Go through expected notes and tick off any we've matched, skipping errors (for now).
     var correctNotes = [];
     fluid.each(transcribedNotes, function (playedVexflowGroup) {
-        // TODO: Make some kind of handling for when the song is completed successfully.  Right now we end up with an array out of bounds.xz   
+        // TODO: Make some kind of event for when the song is completed successfully.
         var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
         if (lpiano.scorer.deepMatch(playedVexflowGroup.keys, nextExpectedNoteGroup.keys)) {
             correctNotes.push(playedVexflowGroup);
@@ -147,10 +156,8 @@ lpiano.scorer.groupTransformAndScore = function (that) {
 lpiano.scorer.generateScoreboard = function (that) {
     var annotatedNotes = [];
 
-    // "that.model.correctNotes", "that.options.expectedNotes", "that.options.playedStyles", "that.options.currentNoteStyles", "that.options.unplayedStyles"
-    
     if (that.model.correctNotes) {
-        var annotatedCorrectNotes = fluid.transform(that.model.correctNotes, function (note) {
+        var annotatedCorrectNotes = fluid.transform(that.options.expectedNotes.slice(0, that.model.correctNotes.length), function (note) {
             note.keyStyle = that.options.playedStyles;
             return note;
         });
@@ -189,10 +196,9 @@ fluid.defaults("lpiano.scorer", {
         }
     },
     expectedNotes:     [],
-    playedStyles:      { shadowBlur:15, shadowColor:"grey", fillStyle:"grey" },
+    playedStyles:      { shadowBlur:15, shadowColor:"black", fillStyle:"black" },
     currentNoteStyles: { shadowBlur:15, shadowColor:"red", fillStyle:"red" },
-    unplayedStyles:    { shadowBlur:15, shadowColor:"blue", fillStyle:"blue" },
-    allSynthsGrade:    "lpiano.synth",
+    unplayedStyles:    { shadowBlur:15, shadowColor:"grey", fillStyle:"grey" },
     goodSynthGrade:    "lpiano.scorer.synths.good",
     badSynthGrade:     "lpiano.scorer.synths.bad",
     invokers: {
@@ -226,7 +232,7 @@ fluid.defaults("lpiano.scorer", {
         }
     },
     modelListeners: {
-        "notes": {
+        "midiNotes": {
             funcName:      "lpiano.scorer.groupTransformAndScore",
             args:          ["{that}"],
             excludeSource: "init"

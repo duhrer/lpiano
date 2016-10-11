@@ -11,25 +11,25 @@
     fluid.registerNamespace("lpiano.transcriber");
 
     lpiano.transcriber.startRecordingNote = function (that, noteDef) {
-        var notes = fluid.copy(that.model.notes);
+        var midiNotes = fluid.copy(that.model.midiNotes);
         var note = fluid.copy(noteDef);
         note.start = Date.now();
-        notes.push(note);
-        that.applier.change("notes", notes);
+        midiNotes.push(note);
+        that.applier.change("midiNotes", midiNotes);
     };
 
     lpiano.transcriber.stopRecordingNote = function (that, noteDef) {
-        var notes = fluid.copy(that.model.notes);
+        var midiNotes = fluid.copy(that.model.midiNotes);
         var foundNote = false;
-        fluid.each(notes, function (note) {
+        fluid.each(midiNotes, function (midiNote) {
             if (foundNote) { return; }
-            if (note.note === noteDef.note && note.end === undefined) {
-                note.end = (new Date()).getTime();
-                note.ms  = note.end - note.start;
+            if (midiNote.note === noteDef.note && midiNote.end === undefined) {
+                midiNote.end = (new Date()).getTime();
+                midiNote.ms  = midiNote.end - midiNote.start;
                 foundNote = true;
             }
         });
-        that.applier.change("notes", notes);
+        that.applier.change("midiNotes", midiNotes);
     };
 
     fluid.defaults("lpiano.transcriber", {
@@ -37,7 +37,7 @@
         lastNotesToDisplay: 8,
         groupingCutoff: 25, // ms
         model: {
-            notes: []
+            midiNotes: []
         },
         listeners: {
             "noteOn.startRecordingNote": {
@@ -82,7 +82,7 @@
         var currentGroup = [];
 
         // Group by time first
-        fluid.each(that.model.notes, function (midiNote) {
+        fluid.each(that.model.midiNotes, function (midiNote) {
             var cutoff = that.options.groupingCutoff || 0;
             if (lastStarted && ((midiNote.start - lastStarted) > cutoff)) {
                 groupedNotes.push(currentGroup);
@@ -97,16 +97,10 @@
         return groupedNotes;
     };
 
-    // TODO: Provide two instances, one of which display plays the full score, broken up into bars
-    // TODO:  For now, we only write to a single treble stave.  Eventually, add support for separate treble and bass staves.
-    // TODO: We are creating some kind of feedback loop.  Look into it.
-
-    // TODO: The main instance should only display the last few bars.
-    lpiano.transcriber.staves.notesToStaves = function (that) {
+    lpiano.transcriber.staves.midiNotesToNotes = function (that) {
         var groupedNotes = lpiano.transcriber.groupNotes(that);
 
-        var staff = that.model.staves[0];
-        staff.notes = fluid.transform(groupedNotes.slice(-1 * that.options.lastNotesToDisplay), function (midiNoteGroup) {
+        var notes = fluid.transform(groupedNotes.slice(-1 * that.options.lastNotesToDisplay), function (midiNoteGroup) {
             var keys = fluid.transform(midiNoteGroup.sort(lpiano.transcriber.sortByPitch), function (midiNote) {
                 var vexFlowNote = lpiano.transforms.pitchToVexflowKey(midiNote.note);
                 var key = { key: vexFlowNote };
@@ -126,11 +120,7 @@
             };
         });
 
-        var staves = fluid.copy(that.model.staves);
-        staves[0]  = staff;
-        that.applier.change("staves", staves);
-
-        that.render();
+        that.applier.change("notes", notes);
     };
 
     fluid.defaults("lpiano.transcriber.staves", {
@@ -138,18 +128,11 @@
         lastNotesToDisplay: 24,
         groupingCutoff: 50, // ms
         model: {
-            notes:[],
-            staves: [{
-                width: 700,
-                xPos:  10,
-                yPos:  40,
-                clef: "treble",
-                notes: []
-            }]
+            midiNotes:[]
         },
         modelListeners: {
-            "notes": {
-                funcName:      "lpiano.transcriber.staves.notesToStaves",
+            "midiNotes": {
+                funcName:      "lpiano.transcriber.staves.midiNotesToNotes",
                 args:          ["{that}"],
                 excludeSource: "init"
             }

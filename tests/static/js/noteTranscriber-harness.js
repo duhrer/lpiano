@@ -43,7 +43,7 @@
                 options: {
                     container: "{harness}.options.vexflowContainer",
                     model: {
-                        notes: "{transcriber}.model.notes"
+                        midiNotes: "{transcriber}.model.midiNotes"
                     }
                 }
             }
