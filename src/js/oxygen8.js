@@ -4,6 +4,8 @@
 
     Adapted from the MIDI demo included with Flocking: https://github.com/colinbdclark/Flocking
 
+    The control knob CC codes correspond to preset 1 with the factory defaults.
+
  */
 /*global fluid, flock*/
 
@@ -13,10 +15,6 @@
     var environment = flock.init();
 
     fluid.registerNamespace("lpiano.oxygen8");
-
-    lpiano.oxygen8.inspect = function (args) {
-        console.log(args.length, " arguments received...");
-    };
 
     lpiano.oxygen8.controlToModel = function (that, controlPayload) {
         that.applier.change("knobs." + controlPayload.number, controlPayload.value);
@@ -32,7 +30,7 @@
     });
 
     fluid.defaults("lpiano.oxygen8", {
-        gradeNames: ["fluid.modelComponent", "fluid.viewComponent"],
+        gradeNames: ["lpiano.harness"],
         model: {
             notes: [],
             knobs: {
@@ -47,76 +45,56 @@
             }
         },
         components: {
-            enviro: "{flock.enviro}",
             controller: {
                 type: "flock.midi.controller",
                 options: {
-                    components: {
-                        synthContext: "{band}"
-                    },
                     controlMap: {
                         "71": {
-                            synth: "square",
-                            input: "mod.freq",
+                            input: "env.start",
                             transform: {
-                                div: 10240
+                                mul: 1/127
                             }
                         },
                         "74": {
-                            synth: "sin",
-                            input: "mod.freq",
+                            input: "env.attack",
                             transform: {
-                                div: 10240
+                                mul: 1/127
                             }
                         },
                         "84": {
-                            synth: "tri",
-                            input: "mod.freq",
+                            input: "env.sustain",
                             transform: {
-                                div: 10240
-                            }
-                        },
-                        "7": {
-                            synth: "saw",
-                            input: "mod.freq",
-                            transform: {
-                                div: 10240
+                                mul: 1/127
                             }
                         },
                         "91": {
-                            synth: "square",
-                            input: "preamp.velocity",
+                            input: "env.release",
                             transform: {
-                                mul: 5
+                                mul: 1/127
                             }
                         },
                         "93": {
-                            synth: "sin",
-                            input: "preamp.velocity",
+                            input: "env.release",
                             transform: {
-                                mul: 5
-                            }
-                        },
-                        "5": {
-                            synth: "tri",
-                            input: "preamp.velocity",
-                            transform: {
-                                mul: 5
-                            }
-                        },
-                        "10": {
-                            synth: "saw",
-                            input: "preamp.velocity",
-                            transform: {
-                                mul: 5
+                                mul: 1/127
                             }
                         }
+                        /*
+
+                        TODO:  Add controls for "5", and "10"
+
+                        potential adsr inputs?
+
+                        delay: 0.1,
+                        decay: 0.3,
+                        peak: 1.0,
+                        bias: 0.0
+
+                        */
                     }
                 }
             },
             midiConnector: {
-                type: "flock.ui.midiConnector",
-                container: "#input-selector",
                 options: {
                     model: {
                         notes: "{oxygen8}.model.notes",
@@ -126,48 +104,6 @@
                         "control.controlToModel": {
                             funcName: "lpiano.oxygen8.controlToModel",
                             args:     ["{that}", "{arguments}.0"]
-                        },
-                        "noteOn.passToSynth": {
-                            func: "{band}.noteOn",
-                            args: [
-                                "{arguments}.0.note",
-                                {
-                                    "fixedNoteOffset.value": "{arguments}.0.note",
-                                    "amp.velocity": "{arguments}.0.velocity"
-                                }
-                            ]
-                        },
-                        "noteOff.passToSynth": "{band}.noteOff({arguments}.0.note)"
-                    }
-                }
-            },
-            band: {
-                type: "lpiano.oxygen8.band",
-                options: {
-                    components: {
-                        square: {
-                            type: "lpiano.synth"
-                        },
-                        sin: {
-                            type: "lpiano.synth",
-                            options: {
-                                mainUgen: "flock.ugen.sinOsc",
-                                pitchOffset: -5
-                            }
-                        },
-                        tri: {
-                            type: "lpiano.synth",
-                            options: {
-                                mainUgen: "flock.ugen.triOsc",
-                                pitchOffset: 5
-                            }
-                        },
-                        saw: {
-                            type: "lpiano.synth",
-                            options: {
-                                mainUgen: "flock.ugen.sawOsc",
-                                pitchOffset: 12
-                            }
                         }
                     }
                 }
@@ -251,12 +187,6 @@
                     }
                 }
             }
-        },
-
-        listeners: {
-            onCreate: [
-                "{that}.enviro.start()"
-            ]
         }
     });
 })();

@@ -19,6 +19,31 @@
         gradeNames: ["fluid.viewComponent"],
         components: {
             enviro: "{flock.enviro}",
+            controller: {
+                type: "flock.midi.controller",
+                options: {
+                    components: {
+                        synthContext: "{synth}"
+                    },
+                    controlMap: {
+                        // Modulation wheel
+                        "1": {
+                            input: "phase.value",
+                            transform: {
+                                mul: 1/64,
+                                add: -1
+                            }
+                        },
+                        // Volume control
+                        "7": {
+                            input: "volume.value",
+                            transform: {
+                                mul: 1/64
+                            }
+                        }
+                    }
+                }
+            },
             midiConnector: {
                 type: "flock.ui.midiConnector",
                 container: "{that}.container",
@@ -35,7 +60,11 @@
                                 }
                             ]
                         },
-                        "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)"
+                        "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)",
+                        "pitchbend.passToSynth": {
+                            funcName: "lpiano.harness.bendPitch",
+                            args: ["{synth}", "{arguments}.0.value"]
+                        }
                     }
                 }
             },

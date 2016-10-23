@@ -26,7 +26,7 @@
                 args: ["{that}", "{arguments}"]
             }
         },
-        mainUgen: "flock.ugen.squareOsc",
+        mainUgen: "flock.ugen.sinOsc",
         synthDef: {
             ugen: "{that}.options.mainUgen",
             freq: {
@@ -48,8 +48,38 @@
                 velocity: 100,
                 mul: {
                     id: "env",
-                    ugen: "flock.ugen.asr"
+                    ugen: "flock.ugen.asr",
+                    // Convenient place to let us control the volume
+                    mul: {
+                        id: "volume",
+                        ugen: "flock.ugen.value",
+                        value: 1
+                    }
                 }
+                // TODO:  Discuss with Colin, this broke things.  I just wanted to have more things to control...
+                // mul: {
+                //     ugen: "flock.ugen.envGen",
+                //     id: "env",
+                //     envelope: {
+                //         type: "flock.envelope.adsr",
+                //         attack: 1.0,
+                //         decay: 0.5,
+                //         peak: 0.15,
+                //         sutain: 0.1,
+                //         release: 1.0
+                //     },
+                //     gate: 1.0,
+                //     mul: {
+                //         id: "volume",
+                //         ugen: "flock.ugen.value",
+                //         value: .5
+                //     }
+                // }
+            },
+            phase: {
+                id: "phase",
+                ugen: "flock.ugen.value",
+                value: 0
             }
         }
     });
