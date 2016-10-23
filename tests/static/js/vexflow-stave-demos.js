@@ -5,29 +5,16 @@
         height: 750,
         gradeNames: ["fluid.tests.lpiano.vexflow"],
         selector:   ".vexflow-stave-multi-container",
-        staves: [
-            // {
-            //     width: 400,
-            //     xPos:  10,
-            //     yPos:  40,
-            //     clef: "treble",
-            //     timeSignature: "4/4",
-            //     notes: [{
-            //         duration: "q",
-            //         keys: ["c/4", "c/5"]
-            //     }]
-            // },
-            {
-                width: 400,
-                xPos:  10,
-                yPos:  100,
-                clef: "bass",
-                timeSignature: "4/4",
-                notes: [{
-                    duration: "q",
-                    keys: ["f/3"]
-                }]
-            }
-        ]
+        staveOptions: {
+            width: 400,
+            xPos:  10,
+            yPos:  10,
+            clef: ["treble", "default", "8va"],
+            timeSignature: "4/4",
+            notes: [{
+                duration: "q",
+                keys: ["f/3"]
+            }]
+        }
     });
 })();

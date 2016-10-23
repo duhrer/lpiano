@@ -13,22 +13,6 @@
 var fluid = fluid || require("infusion");
 var lpiano = fluid.registerNamespace("lpiano");
 
-// Marker grade for "good" synth
-fluid.defaults("lpiano.scorer.synths.good", {
-    gradeNames: ["lpiano.synth"]
-});
-
-// "bad" synth, which sounds, well, bad....
-fluid.defaults("lpiano.scorer.synths.bad", {
-    gradeNames: ["lpiano.synth"],
-    mainUgen: "flock.ugen.sawOsc",
-    synthDef: {
-        mul: {
-            velocity: 10
-        }
-    }
-});
-
 fluid.registerNamespace("lpiano.scorer");
 
 lpiano.scorer.noteInNoteGroup = function (note, noteGroup) {
@@ -50,26 +34,21 @@ lpiano.scorer.noteInNoteGroup = function (note, noteGroup) {
 
 /**
  *
- * Route a noteOn or noteOff to a different set of synths depending on whether it's "good" or "bad".
+ * Mute "bad" notes as needed.
  *
- * @param that
- * @param fnName
- * @param args
  */
-lpiano.scorer.routeFnCallToSynth = function (that, fnName, args) {
-    var destGrade = that.options.goodSynthGrade;
-
-    // TODO: Refactor this.  The first "good" note does not play, and the second note seems to echo.
-    if (fnName !== "noteOff" && (that.options.expectedNotes.length > that.model.correctNotes.length)) {
-        var expectedNoteGroup = that.options.expectedNotes[that.model.correctNotes.length];
-        var notePitch = args[0]["freq.note"] || args[0];
-        var noteInNoteGroup = lpiano.scorer.noteInNoteGroup(notePitch, expectedNoteGroup);
-        if (!noteInNoteGroup) {
-            destGrade = that.options.badSynthGrade;
-        }
+lpiano.scorer.muteBadNotes = function (synth, note, velocity) {
+    // if (synth.model.correctNotes.length && synth.model.correctNotes.length < synth.options.expectedNotes.length) {
+    if (synth.model.correctNotes.length < synth.options.expectedNotes.length) {
+        // TODO:  setting this directly to length results in incorrectly rejecting the second of two matching notes.
+        // TODO:  We still have a problem, in that both the current and the next note always count.
+        // var expectedNoteGroup = synth.options.expectedNotes[synth.model.correctNotes.length - 1];
+        var expectedNoteGroup = synth.options.expectedNotes[synth.model.correctNotes.length];
+        var noteInNoteGroup = lpiano.scorer.noteInNoteGroup(note, expectedNoteGroup);
+        if (!noteInNoteGroup) {  velocity = 5; }
     }
 
-    lpiano.band.sendToComponentsWithGrade(that, fnName, destGrade, args);
+    synth.events.noteOn.fire(note, { "freq.note": note, "amp.velocity": velocity});
 };
 
 // Confirm whether two strings or arrays of strings match deeply
@@ -108,7 +87,7 @@ lpiano.scorer.deepMatch = function (candidate1, candidate2) {
 lpiano.scorer.notesToVexflow = function (groupedNotes) {
     return fluid.transform(groupedNotes, function (singleNoteOrChord) {
         var keys = fluid.transform(fluid.makeArray(singleNoteOrChord), function (note) {
-            return lpiano.transforms.pitchToVexflowKey(note["freq.note"]);
+            return lpiano.transforms.pitchToVexflowKey(note["note"]);
         });
         return { duration: "q", keys: keys };
     });
@@ -118,11 +97,13 @@ lpiano.scorer.scoreNotes = function (transcribedNotes, expectedNotes) {
     // Go through expected notes and tick off any we've matched, skipping errors (for now).
     var correctNotes = [];
     fluid.each(transcribedNotes, function (playedVexflowGroup) {
-        // TODO: Make some kind of event for when the song is completed successfully.
-        var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
-        if (lpiano.scorer.deepMatch(playedVexflowGroup.keys, nextExpectedNoteGroup.keys)) {
-            correctNotes.push(playedVexflowGroup);
+        if (correctNotes.length < expectedNotes.length) {
+            var nextExpectedNoteGroup = expectedNotes[correctNotes.length];
+            if (lpiano.scorer.deepMatch(playedVexflowGroup.keys, nextExpectedNoteGroup.keys)) {
+                correctNotes.push(playedVexflowGroup);
+            }
         }
+        // TODO: Make some kind of event for when the song is completed successfully.
     });
 
     return correctNotes;
@@ -158,7 +139,7 @@ lpiano.scorer.generateScoreboard = function (that) {
 
     if (that.model.correctNotes) {
         var annotatedCorrectNotes = fluid.transform(that.options.expectedNotes.slice(0, that.model.correctNotes.length), function (note) {
-            note.keyStyle = that.options.playedStyles;
+            note.keyStyle = that.options.styles.played;
             return note;
         });
 
@@ -168,14 +149,14 @@ lpiano.scorer.generateScoreboard = function (that) {
     if (annotatedNotes.length < that.options.expectedNotes.length) {
         var annotatedCurrentNote = fluid.copy(that.options.expectedNotes[annotatedNotes.length]);
 
-        annotatedCurrentNote.keyStyle = that.options.currentNoteStyles;
+        annotatedCurrentNote.keyStyle = that.options.styles.current;
 
-        annotatedNotes = annotatedNotes.concat(annotatedCurrentNote);
+        annotatedNotes.push(annotatedCurrentNote);
     }
 
     if ((that.options.expectedNotes.length - annotatedNotes.length) > 0) {
         var annotatedUnplayedNotes = fluid.transform(that.options.expectedNotes.slice(annotatedNotes.length), function (note) {
-            note.keyStyle = that.options.unplayedStyles;
+            note.keyStyle = that.options.styles.unplayed;
             return note;
         });
 
@@ -185,51 +166,20 @@ lpiano.scorer.generateScoreboard = function (that) {
     that.applier.change("scoreboard.notes", annotatedNotes);
 };
 
-
-
-fluid.defaults("lpiano.scorer", {
-    gradeNames: ["flock.band", "flock.noteTarget", "lpiano.transcriber"],
+fluid.defaults("lpiano.scorer.synth", {
+    gradeNames: ["lpiano.synth"],
     model: {
+        midiNotes:    [],
         correctNotes: [],
         scoreboard: {
             notes: "{that}.options.expectedNotes"
         }
     },
     expectedNotes:     [],
-    playedStyles:      { shadowBlur:15, shadowColor:"black", fillStyle:"black" },
-    currentNoteStyles: { shadowBlur:15, shadowColor:"red", fillStyle:"red" },
-    unplayedStyles:    { shadowBlur:15, shadowColor:"grey", fillStyle:"grey" },
-    goodSynthGrade:    "lpiano.scorer.synths.good",
-    badSynthGrade:     "lpiano.scorer.synths.bad",
-    invokers: {
-        noteOn: {
-            funcName: "lpiano.scorer.routeFnCallToSynth",
-            args: ["{that}", "noteOn", "{arguments}"]
-        },
-        noteOff: {
-            funcName: "lpiano.scorer.routeFnCallToSynth",
-            args: ["{that}", "noteOff", "{arguments}"]
-        },
-        set: {
-            funcName: "lpiano.scorer.routeFnCallToSynth",
-            args: ["{that}", "set", "{arguments}"]
-        }
-    },
-    listeners: {
-        "noteOn.routeToSynth": {
-            func: "{that}.noteOn"
-        },
-        "noteOff.routeToSynth": {
-            func: "{that}.noteOff"
-        }
-    },
-    components: {
-        goodSynth: {
-            type: "lpiano.scorer.synths.good"
-        },
-        badSynth: {
-            type: "lpiano.scorer.synths.bad"
-        }
+    styles: {
+        played:   { shadowBlur:15, shadowColor:"black", fillStyle:"black" },
+        current:  { shadowBlur:15, shadowColor:"red",   fillStyle:"red"   },
+        unplayed: { shadowBlur:15, shadowColor:"grey",  fillStyle:"grey"  },
     },
     modelListeners: {
         "midiNotes": {
@@ -241,5 +191,49 @@ fluid.defaults("lpiano.scorer", {
             funcName:      "lpiano.scorer.generateScoreboard",
             args:          ["{that}"]
         }
+    }
+});
+
+fluid.defaults("lpiano.scorer.harness", {
+    gradeNames: ["fluid.viewComponent"],
+    components: {
+        enviro: "{flock.enviro}",
+        midiConnector: {
+            type: "flock.ui.midiConnector",
+            container: "{that}.container",
+            options: {
+                gradeNames: ["lpiano.transcriber"],
+                listeners: {
+                    "noteOn.passToSynth": {
+                        funcName: "lpiano.scorer.muteBadNotes",
+                        priority: "before:startRecordingNote",
+                        args:     ["{synth}", "{arguments}.0.note", "{arguments}.0.velocity"]
+                    },
+                    "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)"
+                }
+            }
+        },
+        synth: {
+            type: "lpiano.scorer.synth",
+            options: {
+                model: {
+                    midiNotes: "{midiConnector}.model.midiNotes"
+                }
+            }
+        },
+        scoreboard: {
+            type: "lpiano.vexflow",
+            // container: ".vexflow-container",
+            options: {
+                model: {
+                    notes: "{synth}.model.scoreboard.notes"
+                }
+            }
+        }
+    },
+    listeners: {
+        onCreate: [
+            "{that}.enviro.start()"
+        ]
     }
 });

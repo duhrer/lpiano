@@ -164,6 +164,7 @@
 
         // convert to ticks, 3/4 time is 4096 * 3 ticks, see https://github.com/0xfe/vexflow/blob/master/src/tables.js#L506
         var ticksPerBar = beatsPerBar * 4096;
+        var barsPerStave = Math.round(that.options.ticksPerStave / ticksPerBar);
 
         var staveNotes = [];
         var currentStaveNotes = [];
@@ -200,6 +201,15 @@
             var currentStaveOptions = fluid.copy(that.options.staveOptions);
             currentStaveOptions.yPos += 100 * stave;
             currentStaveOptions.notes = staveNotes[stave];
+
+            if (stave > 0) {
+                // We can't do this part because vexflow apparently only supports "8va" and "8vb"
+                // var baseClef = fluid.makeArray(that.options.staveOptions.clef)[0];
+                // currentStaveOptions.clef = [baseClef, "default", (barsPerStave * stave) + "va"]
+
+                currentStaveOptions.timeSignature = undefined;
+            }
+
             generatedStaves.push(currentStaveOptions);
         }
 

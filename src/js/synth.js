@@ -1,7 +1,7 @@
 /* globals fluid */
 /*
 
-    The synth used in most of the examples in this package.  Supports static and variable pitch shifting.
+    The synth used in most of the examples in this package.
 
  */
 (function () {
@@ -26,41 +26,29 @@
                 args: ["{that}", "{arguments}"]
             }
         },
-        pitchOffset: 0,
         mainUgen: "flock.ugen.squareOsc",
         synthDef: {
             ugen: "{that}.options.mainUgen",
             freq: {
                 id:   "freq",
                 ugen: "flock.ugen.midiFreq",
-                note: {
-                    id:   "fixedNoteOffset",
-                    ugen: "flock.ugen.value",
-                    add:  "{that}.options.pitchOffset"
+                // The pitch offset we control using "pitchbend" events.
+                add: {
+                    ugen:  "flock.ugen.value",
+                    rate:  "audio",
+                    id:    "pitchbend",
+                    value: 64.0,
+                    add:   -64.0,
+                    mul:   1 // whole "step"
                 }
             },
             mul: {
-                id: "preamp",
+                id: "amp",
                 ugen: "flock.ugen.midiAmp",
-                velocity: 50,
+                velocity: 100,
                 mul: {
-                    id: "amp",
-                    ugen: "flock.ugen.midiAmp",
-                    velocity: 15,
-                    mul: {
-                        id: "env",
-                        ugen: "flock.ugen.asr",
-                        attack: 0.2,
-                        decay: 0.1,
-                        sustain: 1.0,
-                        release: 1.0,
-                        gate: 0.0,
-                        mul: {
-                            id: "mod",
-                            ugen: "flock.ugen.sinOsc",
-                            freq: 1
-                        }
-                    }
+                    id: "env",
+                    ugen: "flock.ugen.asr"
                 }
             }
         }
