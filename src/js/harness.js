@@ -28,10 +28,9 @@
                     controlMap: {
                         // Modulation wheel
                         "1": {
-                            input: "phase.value",
+                            input: "modwheel.add",
                             transform: {
-                                mul: 1/64,
-                                add: -1
+                                mul: 1/16
                             }
                         },
                         // Volume control
