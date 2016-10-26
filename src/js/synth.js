@@ -8,6 +8,8 @@
     "use strict";
 
     fluid.registerNamespace("lpiano.synth");
+
+    // Set a value in all voices.  Used with the mod wheel and pitchbend, which affect all playing voices.
     lpiano.synth.set = function (that, args) {
         var nodes = that.nodeList.nodes;
         var results = [];
@@ -29,27 +31,6 @@
         mainUgen: "flock.ugen.sinOsc",
         synthDef: {
             ugen: "{that}.options.mainUgen",
-            // freq: {
-            //     id:   "freq",
-            //     ugen: "flock.ugen.midiFreq",
-            //     freq: {
-            //         id: "modwheel",
-            //         ugen: "flock.ugen.sinOsc",
-            //         freq: 15,
-            //         phase: 0.25,
-            //         mul: 500,
-            //         add: 6000
-            //     },
-            //     // The pitch offset we control using "pitchbend" events.
-            //     add: {
-            //         ugen:  "flock.ugen.value",
-            //         rate:  "audio",
-            //         id:    "pitchbend",
-            //         value: 64.0,
-            //         add:   -64.0,
-            //         mul:   1 // whole "step"
-            //     }
-            // },
             freq: {
                 id: "modwheel",
                 ugen: "flock.ugen.sinOsc",
@@ -61,9 +42,9 @@
                         ugen:  "flock.ugen.value",
                         rate:  "audio",
                         id:    "pitchbend",
-                        value: 64.0,
-                        add:   -64.0,
-                        mul:   1 // whole "step"
+                        value: 0,
+                        add: -64,
+                        mul:   1 // whole "step" in either direction
                     }
                 },
                 phase: 0.25,

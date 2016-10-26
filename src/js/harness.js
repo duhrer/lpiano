@@ -10,13 +10,14 @@
 
     fluid.registerNamespace("lpiano.harness");
 
-    // Strip the eighth bit from a raw pitchbend value, so that we only get the "bend" (0-127).
     lpiano.harness.bendPitch = function (synth, value) {
-        synth.set("pitchbend.value", value & 127);
+        var scaledValue = (value / 128) - 64;
+        synth.set("pitchbend.value", scaledValue );
     };
 
     fluid.defaults("lpiano.harness", {
         gradeNames: ["fluid.viewComponent"],
+        pitchbendTarget: "pitchbend.value",
         components: {
             enviro: "{flock.enviro}",
             controller: {
@@ -62,7 +63,7 @@
                         "noteOff.passToSynth": "{synth}.noteOff({arguments}.0.note)",
                         "pitchbend.passToSynth": {
                             funcName: "lpiano.harness.bendPitch",
-                            args: ["{synth}", "{arguments}.0.value"]
+                            args:     ["{synth}", "{arguments}.0.value"]
                         }
                     }
                 }

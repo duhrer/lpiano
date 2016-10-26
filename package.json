@@ -11,7 +11,7 @@
   "author": "Tony Atkins <tony@raisingthefloor.org>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "flocking": "git://github.com/colinbdclark/Flocking#ddcfd375097382351433940f7a510a0c8d3e144a",
+    "flocking": "git://github.com/colinbdclark/Flocking#b6dc0a2314da5cbc8e4a59b1feec3508c9ee3430",
     "infusion": "2.0.0-dev.20160519T222603Z.754d2c6",
     "sisiliano": "git://github.com/the-t-in-rtf/music-ctrls#3b75d90db9b71e204461b7a7d62b5f10c1dda490",
     "vexflow": "1.2.83"
