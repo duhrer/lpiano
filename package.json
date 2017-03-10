@@ -13,7 +13,7 @@
   "dependencies": {
     "flocking": "0.2.0-dev.20170206T221943Z.fb09a52",
     "infusion": "2.0.0",
-    "sisiliano": "git://github.com/the-t-in-rtf/music-ctrls#3b75d90db9b71e204461b7a7d62b5f10c1dda490",
+    "sisiliano": "git://github.com/the-t-in-rtf/music-ctrls#5332ff94dad604902324bcad17651e0018aa92d5",
     "vexflow": "1.2.83"
   },
   "devDependencies": {
