@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Synth Demo</title>
+
+        <!-- Infusion dependencies -->
+        <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidIoC.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/DataBinding.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformation.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/ModelTransformationTransforms.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDebugging.js"></script>
+        <script src="../../node_modules/infusion/src/framework/enhancement/js/ContextAwareness.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDocument.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidDOMUtilities.js"></script>
+        <script src="../../node_modules/infusion/src/framework/core/js/FluidView.js"></script>
+
+        <!-- VexFlow dependencies -->
+        <script src="../../node_modules/vexflow/releases/vexflow-debug.js"></script>
+
+        <!-- The VexFlow wrapper provided by this library -->
+        <script src="../../src/js/vexflow.js"></script>
+
+        <!-- Flocking dependencies -->
+        <script src="../../node_modules/flocking/dist/flocking-all.js"></script>
+        <script src="../../node_modules/flocking/src/ui/selectbox/js/selectbox.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
+
+        <!-- Sisliano dependencies -->
+        <link rel="stylesheet" href="../../node_modules/sisiliano/dist/sisiliano.min.css"/>
+        <script src="../../node_modules/sisiliano/dist/sisiliano.js"></script>
+        <script src="../../node_modules/sisiliano/lib/handlebars/handlebars-1.0.rc.2.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/d3/d3.js"></script>
+        <script src="../../node_modules/sisiliano/bower_components/ace-builds/src-noconflict/ace.js"></script>
+
+        <!-- Foundation dependencies -->
+        <link rel="stylesheet" href="../../node_modules/foundation-sites/dist/foundation.css"/>
+        <script src="../../node_modules/foundation-sites/dist/foundation.js"></script>
+
+
+        <script src="../../src/js/synth.js"></script>
+        <script src="../../src/js/harness.js"></script>
+        <script src="../../src/js/band.js"></script>
+    </head>
+
+    <body>
+        <div class="synth-container">
+            <div class="row">
+                <h1>Synth Demo</h1>
+                <p class="instructions">A basic harness for the synth included with this package.</p>
+            </div>
+
+            <div class="row">
+                <div id="input-selector"></div>
+            </div>
+        </div>
+
+        <script>
+            var oxygen8Component = lpiano.harness(".synth-container");
+        </script>
+    </body>
+</html>

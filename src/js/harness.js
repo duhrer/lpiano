@@ -38,7 +38,7 @@
                         "7": {
                             input: "volume.value",
                             transform: {
-                                mul: 1/64
+                                mul: 1/16
                             }
                         }
                     }
