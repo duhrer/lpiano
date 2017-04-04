@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node tests/all-tests.js",
-    "build-sisiliano": "cd node_modules/sisiliano; npm install && grunt build; bower install; cd ../.."
+    "build-sisiliano": "cd node_modules/sisiliano; npm install && grunt build; cd ../.."
   },
   "repository": "https://bitbucket.org/duhrer/lpiano/",
   "author": "Tony Atkins <tony@raisingthefloor.org>",

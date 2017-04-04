@@ -6,6 +6,7 @@
 
         <title>Oxygen 8 Demo</title>
 
+
         <!-- Infusion dependencies -->
         <script src="../../node_modules/infusion/src/lib/jquery/core/js/jquery.js"></script>
         <script src="../../node_modules/infusion/src/framework/core/js/Fluid.js"></script>
@@ -28,15 +29,15 @@
         <!-- Flocking dependencies -->
         <script src="../../node_modules/flocking/dist/flocking-all.js"></script>
         <script src="../../node_modules/flocking/src/ui/selectbox/js/selectbox.js"></script>
-        <script src="../../node_modules/flocking/src/ui/midi/midi-input-selector/js/midi-input-selector.js"></script>
+        <script src="../../node_modules/flocking/src/ui/midi/midi-port-selector/js/midi-port-selector.js"></script>
         <script src="../../node_modules/flocking/src/ui/midi/midi-connector/js/midi-connector.js"></script>
 
         <!-- Sisliano dependencies -->
         <link rel="stylesheet" href="../../node_modules/sisiliano/dist/sisiliano.min.css"/>
         <script src="../../node_modules/sisiliano/dist/sisiliano.js"></script>
-        <script src="../../node_modules/sisiliano/lib/handlebars/handlebars-1.0.rc.2.js"></script>
-        <script src="../../node_modules/sisiliano/bower_components/d3/d3.js"></script>
-        <script src="../../node_modules/sisiliano/bower_components/ace-builds/src-noconflict/ace.js"></script>
+        <script src="../../node_modules/handlebars/dist/handlebars.js"></script>
+        <script src="../../node_modules/d3/d3.js"></script>
+        <script src="../../node_modules/ace-builds/src-noconflict/ace.js"></script>
 
         <!-- Foundation dependencies -->
         <link rel="stylesheet" href="../../node_modules/foundation-sites/dist/foundation.css"/>
@@ -58,21 +59,6 @@
 
             <div class="row">
                 <div class="column small-3">
-                    <div id="knob5"></div>
-                </div>
-                <div class="column small-3">
-                    <div id="knob6"></div>
-                </div>
-                <div class="column small-3">
-                    <div id="knob7"></div>
-                </div>
-                <div class="column small-3">
-                    <div id="knob8"></div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="column small-3">
                     <div id="knob1"></div>
                 </div>
                 <div class="column small-3">
@@ -83,6 +69,21 @@
                 </div>
                 <div class="column small-3">
                     <div id="knob4"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column small-3">
+                    <div id="knob5"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob6"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob7"></div>
+                </div>
+                <div class="column small-3">
+                    <div id="knob8"></div>
                 </div>
             </div>
 

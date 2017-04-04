@@ -34,14 +34,14 @@
         model: {
             notes: [],
             knobs: {
-                71: 64,
+                72: 64,
+                8: 64,
                 74: 64,
-                84: 64,
-                7:  64,
-                91: 64,
-                93: 64,
-                5:  64,
-                10: 64
+                71: 64,
+                20: 64,
+                22: 64,
+                86: 64,
+                73: 64
             }
         },
         components: {
@@ -49,31 +49,31 @@
                 type: "flock.midi.controller",
                 options: {
                     controlMap: {
-                        "71": {
+                        "72": {
                             input: "env.start",
                             transform: {
                                 mul: 1/127
                             }
                         },
-                        "74": {
+                        "8": {
                             input: "env.attack",
                             transform: {
                                 mul: 1/127
                             }
                         },
-                        "84": {
+                        "74": {
                             input: "env.sustain",
                             transform: {
                                 mul: 1/127
                             }
                         },
-                        "91": {
+                        "71": {
                             input: "env.release",
                             transform: {
                                 mul: 1/127
                             }
                         },
-                        "93": {
+                        "20": {
                             input: "env.release",
                             transform: {
                                 mul: 1/127
@@ -113,7 +113,7 @@
                 container: "#knob1",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.91"
+                        value: "{lpiano.oxygen8}.model.knobs.72"
                     }
                 }
             },
@@ -122,7 +122,7 @@
                 container: "#knob2",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.93"
+                        value: "{lpiano.oxygen8}.model.knobs.8"
                     }
                 }
             },
@@ -131,7 +131,7 @@
                 container: "#knob3",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.5"
+                        value: "{lpiano.oxygen8}.model.knobs.74"
                     }
                 }
             },
@@ -140,23 +140,16 @@
                 container: "#knob4",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.10"
+                        value: "{lpiano.oxygen8}.model.knobs.71"
                     }
                 }
             },
-            /*
-             71: 64,
-             74: 64,
-             84: 64,
-             7:  64,
-
-             */
             knob5: {
                 type: "lpiano.oxygen8.knob",
                 container: "#knob5",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.71"
+                        value: "{lpiano.oxygen8}.model.knobs.20"
                     }
                 }
             },
@@ -165,7 +158,7 @@
                 container: "#knob6",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.74"
+                        value: "{lpiano.oxygen8}.model.knobs.22"
                     }
                 }
             },
@@ -174,7 +167,7 @@
                 container: "#knob7",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.84"
+                        value: "{lpiano.oxygen8}.model.knobs.86"
                     }
                 }
             },
@@ -183,7 +176,7 @@
                 container: "#knob8",
                 options: {
                     model: {
-                        value: "{lpiano.oxygen8}.model.knobs.7"
+                        value: "{lpiano.oxygen8}.model.knobs.73"
                     }
                 }
             }

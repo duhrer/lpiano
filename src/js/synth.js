@@ -42,14 +42,12 @@ fluid.defaults("lpiano.synth", {
                     ugen:  "flock.ugen.value",
                     rate:  "audio",
                     id:    "pitchbend",
-                    value: 0,
-                    add:   -64,
-                    mul:   0.5 // half "step" in either direction
+                    value: 0
                 }
             },
             phase: 0.0,
             mul: 500,
-            add: 0
+            add: 1
         },
         mul: {
             id: "amp",
