@@ -1240,9 +1240,10 @@ http-signature@~1.1.0:
     jsprim "^1.2.2"
     sshpk "^1.7.0"
 
-"http2@git://github.com/gruntjs/node-http2.git#fix-return-value":
+"http2@git://github.com/gruntjs/node-http2#fix-return-value":
   version "3.3.2"
-  resolved "git://github.com/gruntjs/node-http2.git#f1fc002c1aef9b4e871c808fc5ddacdeb1a5cd94"
+  uid f1fc002c1aef9b4e871c808fc5ddacdeb1a5cd94
+  resolved "git://github.com/gruntjs/node-http2#f1fc002c1aef9b4e871c808fc5ddacdeb1a5cd94"
 
 iconv-lite@0.4.13:
   version "0.4.13"
@@ -2442,8 +2443,8 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.1.tgz#76899499c184b6ef754377c2dbb0cd6cb55d29e7"
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
 
 what-input@^2.0.0:
   version "2.1.1"
