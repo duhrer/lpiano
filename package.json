@@ -21,7 +21,7 @@
     "fluid-grunt-eslint": "18.1.2",
     "foundation-sites": "6.2.3",
     "gpii-webdriver": "git://github.com/the-t-in-rtf/gpii-webdriver#4b4e405989c1007d7efb505e9e1ae8a6064787a3",
-    "grunt": "1.0.1",
+    "grunt": "1.5.3",
     "grunt-jsonlint": "1.1.0",
     "node-jqunit": "1.1.4"
   }
